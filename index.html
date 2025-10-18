@@ -783,6 +783,9 @@
     </div>
 
     <script>
+        const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000' 
+    : 'https://eduspherebackend-0ytt.onrender.com';
         // Particle background animation
         function createParticles() {
             const particles = document.getElementById('particles');
@@ -934,6 +937,30 @@
             document.getElementById(tabName).classList.remove('hidden');
         }
 
+        async function apiCall(endpoint, options = {}) {
+    const url = `${API_BASE_URL}${endpoint}`;
+    const response = await fetch(url, {
+        ...options,
+        credentials: 'include' // Important for cookies/sessions
+    });
+    return response;
+}
+
+// Example updates:
+// Login function
+const response = await apiCall('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password, role })
+});
+
+// Load tests
+const response = await apiCall('/api/tests');
+
+// Load performance
+const response = await apiCall('/api/performance');
+
+// etc for all API calls
         async function logout() {
             try {
                 await fetch('/api/logout', { method: 'POST' });
