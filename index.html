@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JEE/NEET Mock Test Platform</title>
+    <title>EduSphere | JEE/NEET Mock Test Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,283 +28,754 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
             min-height: 100vh;
+            color: var(--light);
+            overflow-x: hidden;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Auth Sections */
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
             padding: 20px;
         }
 
-        .header {
-            background: white;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .auth-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: var(--shadow);
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+
+        .auth-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-header {
+            text-align: center;
             margin-bottom: 2rem;
+        }
+
+        .logo {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            color: white;
-            font-weight: bold;
-        }
-
-        .btn-primary {
-            background: #4CAF50;
-        }
-
-        .btn-secondary {
-            background: #2196F3;
-        }
-
-        .btn-danger {
-            background: #f44336;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h3 {
+            justify-content: center;
+            gap: 12px;
             margin-bottom: 1rem;
-            color: #333;
         }
 
-        .test-list {
-            display: grid;
-            gap: 1rem;
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
         }
 
-        .test-item {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 5px;
-            border-left: 4px solid #2196F3;
-        }
-
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
             margin-bottom: 0.5rem;
-            color: #333;
+            font-weight: 600;
+            color: var(--light);
         }
 
-        .form-group input, .form-group select {
+        .form-input {
             width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: var(--transition);
         }
 
-        .hidden {
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .auth-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .auth-link:hover {
+            color: var(--secondary);
+        }
+
+        /* Dashboard */
+        .dashboard {
             display: none;
+            flex-direction: column;
+            gap: 2rem;
         }
 
-        #userInfo {
-            color: #333;
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 1rem 2rem;
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            color: var(--light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .nav-tab:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: var(--primary);
+            transform: scale(1.05);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            gap: 2rem;
+        }
+
+        .content-section.active {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+        }
+
+        .main-content {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .sidebar {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            height: fit-content;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Test Grid */
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .test-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .test-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .test-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .test-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .test-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Performance Metrics */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .metric-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: scale(1.05);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        /* AI Guidance */
+        .ai-guidance {
+            background: var(--glass);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .guidance-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: var(--transition);
+        }
+
+        .guidance-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(10px);
+        }
+
+        /* Admin Panel */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+        }
+
+        .admin-sidebar {
+            background: var(--glass);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .admin-tab {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .admin-tab:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .admin-tab.active {
+            background: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-section.active {
+                grid-template-columns: 1fr;
+            }
+            
+            .test-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .auth-card {
+                padding: 2rem;
+            }
+        }
+
+        /* Hidden utility */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Login Section -->
-        <div id="loginSection" class="login-container">
-            <h2>Login to Mock Test Platform</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label>Username:</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="form-group">
-                    <label>Password:</label>
-                    <input type="password" id="password" required>
-                </div>
-                <div class="form-group">
-                    <label>Role:</label>
-                    <select id="role">
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
-            </form>
-            <p style="margin-top: 1rem; text-align: center;">
-                Don't have an account? <a href="#" onclick="showRegister()">Register here</a>
-            </p>
-        </div>
+    <!-- Animated Background Particles -->
+    <div class="particles" id="particles"></div>
 
-        <!-- Register Section -->
-        <div id="registerSection" class="login-container hidden">
-            <h2>Register New Account</h2>
-            <form id="registerForm">
-                <div class="form-group">
-                    <label>Username:</label>
-                    <input type="text" id="regUsername" required>
+    <!-- Auth Section -->
+    <div class="auth-container" id="authContainer">
+        <div class="auth-card">
+            <!-- Login Form -->
+            <div id="loginSection">
+                <div class="auth-header">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="logo-text">EduSphere</div>
+                    </div>
+                    <p>Unlock Your Potential with AI-Powered Learning</p>
                 </div>
-                <div class="form-group">
-                    <label>Password:</label>
-                    <input type="password" id="regPassword" required>
-                </div>
-                <div class="form-group">
-                    <label>Role:</label>
-                    <select id="regRole">
-                        <option value="student">Student</option>
-                        <option value="teacher">Teacher</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
-            </form>
-            <p style="margin-top: 1rem; text-align: center;">
-                Already have an account? <a href="#" onclick="showLogin()">Login here</a>
-            </p>
-        </div>
-
-        <!-- Main Dashboard -->
-        <div id="dashboardSection" class="hidden">
-            <div class="header">
-                <h1>JEE/NEET Mock Test Platform</h1>
-                <div>
-                    <span id="userInfo"></span>
-                    <button onclick="logout()" class="btn btn-danger">Logout</button>
-                </div>
-            </div>
-
-            <div class="nav-buttons">
-                <button class="btn btn-primary" onclick="showSection('tests')">Available Tests</button>
-                <button class="btn btn-secondary" onclick="showSection('performance')">My Performance</button>
-                <button class="btn btn-secondary" onclick="showSection('guidance')">AI Chapter Guidance</button>
-                <button id="adminBtn" class="btn btn-secondary hidden" onclick="showSection('admin')">Admin Panel</button>
-            </div>
-
-            <!-- Tests Section -->
-            <div id="testsSection" class="section">
-                <div class="card">
-                    <h3>Available Mock Tests</h3>
-                    <div id="testsList" class="test-list"></div>
-                </div>
-            </div>
-
-            <!-- Performance Section -->
-            <div id="performanceSection" class="section hidden">
-                <div class="card">
-                    <h3>My Performance</h3>
-                    <div id="performanceData"></div>
-                </div>
-            </div>
-
-            <!-- AI Guidance Section -->
-            <div id="guidanceSection" class="section hidden">
-                <div class="card">
-                    <h3>AI Chapter Guidance</h3>
+                <form id="loginForm">
                     <div class="form-group">
-                        <input type="text" id="chapterInput" placeholder="Enter chapter name">
-                        <button onclick="getAIGuidance()" class="btn btn-primary">Get Guidance</button>
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" id="username" placeholder="Enter your username" required>
                     </div>
-                    <div id="guidanceResult"></div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <select class="form-input" id="role">
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="loginBtn">
+                        <span>Access Your Dashboard</span>
+                    </button>
+                </form>
+                <div class="auth-switch">
+                    Don't have an account? <a href="#" class="auth-link" onclick="showRegister()">Create one here</a>
                 </div>
             </div>
 
-            <!-- Admin Section -->
-            <div id="adminSection" class="section hidden">
-                <div class="card">
-                    <h3>Admin Panel</h3>
-                    <div class="nav-buttons">
-                        <button class="btn btn-primary" onclick="showAdminTab('manageQuestions')">Manage Questions</button>
-                        <button class="btn btn-primary" onclick="showAdminTab('createTest')">Create Test</button>
+            <!-- Register Form -->
+            <div id="registerSection" class="hidden">
+                <div class="auth-header">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div class="logo-text">Join EduSphere</div>
                     </div>
-
-                    <!-- Manage Questions -->
-                    <div id="manageQuestions" class="admin-tab">
-                        <h4>Add New Question</h4>
-                        <form id="questionForm">
-                            <div class="form-group">
-                                <label>Question:</label>
-                                <textarea id="questionText" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Options (comma separated):</label>
-                                <input type="text" id="questionOptions" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Correct Answer (option number):</label>
-                                <input type="number" id="correctAnswer" min="0" max="3" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Subject:</label>
-                                <input type="text" id="questionSubject" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Chapter:</label>
-                                <input type="text" id="questionChapter" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Add Question</button>
-                        </form>
-                        <div id="questionsList"></div>
+                    <p>Start your learning journey today</p>
+                </div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-input" id="regUsername" placeholder="Choose a username" required>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="regPassword" placeholder="Create a strong password" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <select class="form-input" id="regRole">
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="registerBtn">
+                        <span>Create Account</span>
+                    </button>
+                </form>
+                <div class="auth-switch">
+                    Already have an account? <a href="#" class="auth-link" onclick="showLogin()">Sign in here</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <!-- Create Test -->
-                    <div id="createTest" class="admin-tab hidden">
-                        <h4>Create New Test</h4>
-                        <form id="testForm">
-                            <div class="form-group">
-                                <label>Test Title:</label>
-                                <input type="text" id="testTitle" required>
+    <!-- Dashboard -->
+    <div class="container">
+        <div class="dashboard" id="dashboard">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="logo-text">EduSphere</div>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div>
+                        <div id="userName">User</div>
+                        <div id="userRole" style="opacity: 0.7; font-size: 0.9rem;">Role</div>
+                    </div>
+                    <button class="btn btn-secondary" onclick="logout()" style="margin-left: 1rem;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="showSection('tests')">
+                    <i class="fas fa-file-alt"></i> Mock Tests
+                </div>
+                <div class="nav-tab" onclick="showSection('performance')">
+                    <i class="fas fa-chart-line"></i> Performance
+                </div>
+                <div class="nav-tab" onclick="showSection('guidance')">
+                    <i class="fas fa-robot"></i> AI Guidance
+                </div>
+                <div class="nav-tab hidden" id="adminTab" onclick="showSection('admin')">
+                    <i class="fas fa-cogs"></i> Admin Panel
+                </div>
+            </div>
+
+            <!-- Content Sections -->
+            <div class="content-section active" id="testsSection">
+                <div class="main-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Available Mock Tests</h2>
+                            <div class="btn btn-secondary" onclick="refreshTests()">
+                                <i class="fas fa-sync-alt"></i> Refresh
                             </div>
-                            <div class="form-group">
-                                <label>Description:</label>
-                                <textarea id="testDescription" required></textarea>
+                        </div>
+                        <div class="test-grid" id="testsGrid">
+                            <!-- Tests will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar">
+                    <div class="card">
+                        <h3 class="card-title">Quick Stats</h3>
+                        <div class="metrics">
+                            <div class="metric-card">
+                                <div class="metric-value" id="testsTaken">0</div>
+                                <div>Tests Taken</div>
                             </div>
-                            <div class="form-group">
-                                <label>Duration (minutes):</label>
-                                <input type="number" id="testDuration" required>
+                            <div class="metric-card">
+                                <div class="metric-value" id="avgScore">0%</div>
+                                <div>Average Score</div>
                             </div>
-                            <div class="form-group">
-                                <label>Subject:</label>
-                                <input type="text" id="testSubject" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="performanceSection">
+                <div class="main-content">
+                    <div class="card">
+                        <h2 class="card-title">Performance Analytics</h2>
+                        <div id="performanceData">
+                            <!-- Performance data will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="guidanceSection">
+                <div class="main-content">
+                    <div class="card">
+                        <h2 class="card-title">AI Chapter Guidance</h2>
+                        <div class="form-group">
+                            <input type="text" class="form-input" id="chapterInput" placeholder="Enter chapter name (e.g., Organic Chemistry, Calculus)">
+                            <button class="btn btn-primary" onclick="getAIGuidance()" style="margin-top: 1rem;">
+                                <i class="fas fa-magic"></i> Get AI Guidance
+                            </button>
+                        </div>
+                        <div id="guidanceResult" class="ai-guidance">
+                            <!-- AI guidance will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="adminSection">
+                <div class="main-content">
+                    <div class="card">
+                        <h2 class="card-title">Admin Dashboard</h2>
+                        <div class="admin-grid">
+                            <div class="admin-sidebar">
+                                <div class="admin-tab active" onclick="showAdminTab('manageQuestions')">
+                                    Manage Questions
+                                </div>
+                                <div class="admin-tab" onclick="showAdminTab('createTest')">
+                                    Create Test
+                                </div>
                             </div>
-                            <div id="availableQuestions"></div>
-                            <button type="submit" class="btn btn-primary">Create Test</button>
-                        </form>
+                            <div class="admin-content">
+                                <div id="manageQuestions">
+                                    <h3>Add New Question</h3>
+                                    <form id="questionForm">
+                                        <div class="form-group">
+                                            <label class="form-label">Question</label>
+                                            <textarea class="form-input" id="questionText" required rows="3"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Options (comma separated)</label>
+                                            <input type="text" class="form-input" id="questionOptions" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Correct Answer (0-3)</label>
+                                            <input type="number" class="form-input" id="correctAnswer" min="0" max="3" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Subject</label>
+                                            <input type="text" class="form-input" id="questionSubject" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Chapter</label>
+                                            <input type="text" class="form-input" id="questionChapter" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Add Question</button>
+                                    </form>
+                                    <div id="questionsList" style="margin-top: 2rem;"></div>
+                                </div>
+                                <div id="createTest" class="hidden">
+                                    <h3>Create New Test</h3>
+                                    <form id="testForm">
+                                        <div class="form-group">
+                                            <label class="form-label">Test Title</label>
+                                            <input type="text" class="form-input" id="testTitle" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Description</label>
+                                            <textarea class="form-input" id="testDescription" required></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Duration (minutes)</label>
+                                            <input type="number" class="form-input" id="testDuration" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Subject</label>
+                                            <input type="text" class="form-input" id="testSubject" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Create Test</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -296,6 +783,23 @@
     </div>
 
     <script>
+        // Particle background animation
+        function createParticles() {
+            const particles = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.width = `${Math.random() * 20 + 5}px`;
+                particle.style.height = particle.style.width;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                particle.style.animationDelay = `${Math.random() * 6}s`;
+                particles.appendChild(particle);
+            }
+        }
+
+        // Your existing JavaScript functionality remains the same
         let currentUser = null;
         let allQuestions = [];
 
@@ -315,12 +819,15 @@
             }
         }
 
-        // Login
+        // Login function
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const role = document.getElementById('role').value;
+
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.innerHTML = '<div class="loading"></div>';
 
             try {
                 const response = await fetch('/api/login', {
@@ -338,15 +845,20 @@
                 }
             } catch (error) {
                 alert('Login failed');
+            } finally {
+                loginBtn.innerHTML = '<span>Access Your Dashboard</span>';
             }
         });
 
-        // Register
+        // Register function
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('regUsername').value;
             const password = document.getElementById('regPassword').value;
             const role = document.getElementById('regRole').value;
+
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.innerHTML = '<div class="loading"></div>';
 
             try {
                 const response = await fetch('/api/register', {
@@ -364,6 +876,8 @@
                 }
             } catch (error) {
                 alert('Registration failed');
+            } finally {
+                registerBtn.innerHTML = '<span>Create Account</span>';
             }
         });
 
@@ -378,14 +892,15 @@
         }
 
         function showDashboard() {
-            document.getElementById('loginSection').classList.add('hidden');
-            document.getElementById('registerSection').classList.add('hidden');
-            document.getElementById('dashboardSection').classList.remove('hidden');
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'flex';
             
-            document.getElementById('userInfo').textContent = `Welcome, ${currentUser.username} (${currentUser.role})`;
+            document.getElementById('userName').textContent = currentUser.username;
+            document.getElementById('userRole').textContent = currentUser.role;
+            document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
             
             if (currentUser.role === 'admin') {
-                document.getElementById('adminBtn').classList.remove('hidden');
+                document.getElementById('adminTab').classList.remove('hidden');
             }
             
             loadTests();
@@ -396,16 +911,26 @@
         }
 
         function showSection(sectionName) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.classList.add('hidden');
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
             });
-            document.getElementById(sectionName + 'Section').classList.remove('hidden');
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName + 'Section').classList.add('active');
+            event.target.classList.add('active');
         }
 
         function showAdminTab(tabName) {
             document.querySelectorAll('.admin-tab').forEach(tab => {
-                tab.classList.add('hidden');
+                tab.classList.remove('active');
             });
+            document.querySelectorAll('.admin-content > div').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            document.querySelector(`.admin-tab[onclick="showAdminTab('${tabName}')"]`).classList.add('active');
             document.getElementById(tabName).classList.remove('hidden');
         }
 
@@ -423,13 +948,16 @@
             try {
                 const response = await fetch('/api/tests');
                 const tests = await response.json();
-                const testsList = document.getElementById('testsList');
-                testsList.innerHTML = tests.map(test => `
-                    <div class="test-item">
-                        <h4>${test.title}</h4>
-                        <p>${test.description}</p>
-                        <p>Duration: ${test.duration} minutes</p>
-                        <button onclick="startTest('${test._id}')" class="btn btn-primary">Start Test</button>
+                const testsGrid = document.getElementById('testsGrid');
+                testsGrid.innerHTML = tests.map(test => `
+                    <div class="test-card" onclick="startTest('${test._id}')">
+                        <div class="test-badge">${test.duration}min</div>
+                        <h3>${test.title}</h3>
+                        <p style="opacity: 0.8; margin: 0.5rem 0;">${test.description}</p>
+                        <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                            <span style="background: var(--primary); padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem;">${test.subject}</span>
+                            <span style="opacity: 0.7;">${test.questions.length} questions</span>
+                        </div>
                     </div>
                 `).join('');
             } catch (error) {
@@ -442,11 +970,26 @@
                 const response = await fetch('/api/performance');
                 const performances = await response.json();
                 const performanceData = document.getElementById('performanceData');
+                
+                // Update quick stats
+                document.getElementById('testsTaken').textContent = performances.length;
+                const avgScore = performances.length > 0 ? 
+                    (performances.reduce((sum, perf) => sum + (perf.score / perf.totalMarks), 0) / performances.length * 100).toFixed(1) : 0;
+                document.getElementById('avgScore').textContent = avgScore + '%';
+                
                 performanceData.innerHTML = performances.map(perf => `
-                    <div class="test-item">
-                        <h4>${perf.testId.title}</h4>
-                        <p>Score: ${perf.score}/${perf.totalMarks}</p>
-                        <p>Time Taken: ${perf.timeTaken} minutes</p>
+                    <div class="test-card">
+                        <h3>${perf.testId.title}</h3>
+                        <div class="metrics">
+                            <div class="metric-card">
+                                <div class="metric-value">${((perf.score / perf.totalMarks) * 100).toFixed(1)}%</div>
+                                <div>Score</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value">${perf.timeTaken}m</div>
+                                <div>Time Taken</div>
+                            </div>
+                        </div>
                     </div>
                 `).join('');
             } catch (error) {
@@ -463,13 +1006,25 @@
                 const guidance = await response.json();
                 const guidanceResult = document.getElementById('guidanceResult');
                 guidanceResult.innerHTML = `
-                    <h4>Guidance for ${guidance.chapter}</h4>
-                    <h5>Topics to Focus:</h5>
-                    <ul>${guidance.topics.map(topic => `<li>${topic}</li>`).join('')}</ul>
-                    <h5>Recommendation:</h5>
-                    <p>${guidance.recommendation}</p>
-                    <h5>Resources:</h5>
-                    <ul>${guidance.resources.map(resource => `<li>${resource}</li>`).join('')}</ul>
+                    <h4>AI Guidance for ${guidance.chapter}</h4>
+                    <div class="guidance-item">
+                        <i class="fas fa-lightbulb" style="color: var(--accent);"></i>
+                        <div>
+                            <strong>Key Topics:</strong> ${guidance.topics.join(', ')}
+                        </div>
+                    </div>
+                    <div class="guidance-item">
+                        <i class="fas fa-star" style="color: var(--secondary);"></i>
+                        <div>
+                            <strong>Recommendation:</strong> ${guidance.recommendation}
+                        </div>
+                    </div>
+                    <div class="guidance-item">
+                        <i class="fas fa-book" style="color: var(--primary);"></i>
+                        <div>
+                            <strong>Resources:</strong> ${guidance.resources.join(', ')}
+                        </div>
+                    </div>
                 `;
             } catch (error) {
                 console.error('Failed to get AI guidance:', error);
@@ -483,7 +1038,7 @@
                 allQuestions = await response.json();
                 const questionsList = document.getElementById('questionsList');
                 questionsList.innerHTML = '<h4>All Questions</h4>' + allQuestions.map(q => `
-                    <div class="test-item">
+                    <div class="test-card">
                         <p><strong>Q:</strong> ${q.question}</p>
                         <p><strong>Subject:</strong> ${q.subject} | <strong>Chapter:</strong> ${q.chapter}</p>
                     </div>
@@ -499,7 +1054,7 @@
                 question: document.getElementById('questionText').value,
                 options: document.getElementById('questionOptions').value.split(','),
                 correctAnswer: parseInt(document.getElementById('correctAnswer').value),
-                explanation: "Explanation will be added here",
+                explanation: "Detailed explanation will be provided",
                 subject: document.getElementById('questionSubject').value,
                 chapter: document.getElementById('questionChapter').value,
                 difficulty: "medium",
@@ -526,9 +1081,16 @@
         });
 
         function startTest(testId) {
-            alert(`Starting test ${testId}. Test interface would be implemented here.`);
-            // Implement test taking interface
+            alert(`Advanced test interface would launch for test: ${testId}`);
+            // Implement sophisticated test taking interface
         }
+
+        function refreshTests() {
+            loadTests();
+        }
+
+        // Initialize particles when page loads
+        window.addEventListener('load', createParticles);
     </script>
 </body>
 </html>
