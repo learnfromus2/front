@@ -809,18 +809,20 @@
         // Check if user is already logged in
         checkAuth();
 
-        async function checkAuth() {
-            try {
-                const response = await fetch('/api/user');
-                const data = await response.json();
-                if (data.user) {
-                    currentUser = data.user;
-                    showDashboard();
-                }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-            }
+       async function checkAuth() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/user`, {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.user) {
+            currentUser = data.user;
+            showDashboard();
         }
+    } catch (error) {
+        console.error('Auth check failed:', error);
+    }
+}
 
         // Login function
      document.getElementById('loginForm').addEventListener('submit', async (e) => {
