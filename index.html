@@ -823,66 +823,66 @@
         }
 
         // Login function
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const role = document.getElementById('role').value;
+     document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const role = document.getElementById('role').value;
 
-            const loginBtn = document.getElementById('loginBtn');
-            loginBtn.innerHTML = '<div class="loading"></div>';
+    const loginBtn = document.getElementById('loginBtn');
+    loginBtn.innerHTML = '<div class="loading"></div>';
 
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password, role })
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    currentUser = data.user;
-                    showDashboard();
-                } else {
-                    alert(data.error);
-                }
-            } catch (error) {
-                alert('Login failed');
-            } finally {
-                loginBtn.innerHTML = '<span>Access Your Dashboard</span>';
-            }
+    try {
+        const response = await apiCall('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password, role })
         });
+
+        const data = await response.json();
+        if (response.ok) {
+            currentUser = data.user;
+            showDashboard();
+        } else {
+            alert(data.error);
+        }
+    } catch (error) {
+        alert('Login failed');
+    } finally {
+        loginBtn.innerHTML = '<span>Access Your Dashboard</span>';
+    }
+});
 
         // Register function
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('regUsername').value;
-            const password = document.getElementById('regPassword').value;
-            const role = document.getElementById('regRole').value;
+    e.preventDefault();
+    const username = document.getElementById('regUsername').value;
+    const password = document.getElementById('regPassword').value;
+    const role = document.getElementById('regRole').value;
 
-            const registerBtn = document.getElementById('registerBtn');
-            registerBtn.innerHTML = '<div class="loading"></div>';
+    const registerBtn = document.getElementById('registerBtn');
+    registerBtn.innerHTML = '<div class="loading"></div>';
 
-            try {
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password, role })
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    alert('Registration successful! Please login.');
-                    showLogin();
-                } else {
-                    alert(data.error);
-                }
-            } catch (error) {
-                alert('Registration failed');
-            } finally {
-                registerBtn.innerHTML = '<span>Create Account</span>';
-            }
+    try {
+        const response = await apiCall('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password, role })
         });
+
+        const data = await response.json();
+        if (response.ok) {
+            alert('Registration successful! Please login.');
+            showLogin();
+        } else {
+            alert(data.error);
+        }
+    } catch (error) {
+        alert('Registration failed');
+    } finally {
+        registerBtn.innerHTML = '<span>Create Account</span>';
+    }
+});
 
         function showLogin() {
             document.getElementById('loginSection').classList.remove('hidden');
@@ -937,175 +937,168 @@
             document.getElementById(tabName).classList.remove('hidden');
         }
 
-        async function apiCall(endpoint, options = {}) {
+    async function apiCall(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
-    const response = await fetch(url, {
-        ...options,
-        credentials: 'include' // Important for cookies/sessions
-    });
-    return response;
+    try {
+        const response = await fetch(url, {
+            ...options,
+            credentials: 'include'
+        });
+        return response;
+    } catch (error) {
+        console.error('API call failed:', error);
+        throw error;
+    }
 }
 
-// Example updates:
-// Login function
-const response = await apiCall('/api/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password, role })
-});
 
-// Load tests
-const response = await apiCall('/api/tests');
 
-// Load performance
-const response = await apiCall('/api/performance');
 
 // etc for all API calls
-        async function logout() {
-            try {
-                await fetch('/api/logout', { method: 'POST' });
-                currentUser = null;
-                location.reload();
-            } catch (error) {
-                console.error('Logout failed:', error);
-            }
-        }
-
+  async function logout() {
+    try {
+        await apiCall('/api/logout', { method: 'POST' });
+        currentUser = null;
+        location.reload();
+    } catch (error) {
+        console.error('Logout failed:', error);
+    }
+}
         async function loadTests() {
-            try {
-                const response = await fetch('/api/tests');
-                const tests = await response.json();
-                const testsGrid = document.getElementById('testsGrid');
-                testsGrid.innerHTML = tests.map(test => `
-                    <div class="test-card" onclick="startTest('${test._id}')">
-                        <div class="test-badge">${test.duration}min</div>
-                        <h3>${test.title}</h3>
-                        <p style="opacity: 0.8; margin: 0.5rem 0;">${test.description}</p>
-                        <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
-                            <span style="background: var(--primary); padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem;">${test.subject}</span>
-                            <span style="opacity: 0.7;">${test.questions.length} questions</span>
-                        </div>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Failed to load tests:', error);
-            }
-        }
+    try {
+        const response = await apiCall('/api/tests');
+        const tests = await response.json();
+        const testsGrid = document.getElementById('testsGrid');
+        testsGrid.innerHTML = tests.map(test => `
+            <div class="test-card" onclick="startTest('${test._id}')">
+                <div class="test-badge">${test.duration}min</div>
+                <h3>${test.title}</h3>
+                <p style="opacity: 0.8; margin: 0.5rem 0;">${test.description}</p>
+                <div style="display: flex; justify-content: space-between; margin-top: 1rem;">
+                    <span style="background: var(--primary); padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.8rem;">${test.subject}</span>
+                    <span style="opacity: 0.7;">${test.questions.length} questions</span>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Failed to load tests:', error);
+    }
+}
 
         async function loadPerformance() {
-            try {
-                const response = await fetch('/api/performance');
-                const performances = await response.json();
-                const performanceData = document.getElementById('performanceData');
-                
-                // Update quick stats
-                document.getElementById('testsTaken').textContent = performances.length;
-                const avgScore = performances.length > 0 ? 
-                    (performances.reduce((sum, perf) => sum + (perf.score / perf.totalMarks), 0) / performances.length * 100).toFixed(1) : 0;
-                document.getElementById('avgScore').textContent = avgScore + '%';
-                
-                performanceData.innerHTML = performances.map(perf => `
-                    <div class="test-card">
-                        <h3>${perf.testId.title}</h3>
-                        <div class="metrics">
-                            <div class="metric-card">
-                                <div class="metric-value">${((perf.score / perf.totalMarks) * 100).toFixed(1)}%</div>
-                                <div>Score</div>
-                            </div>
-                            <div class="metric-card">
-                                <div class="metric-value">${perf.timeTaken}m</div>
-                                <div>Time Taken</div>
-                            </div>
-                        </div>
+    try {
+        const response = await apiCall('/api/performance');
+        const performances = await response.json();
+        const performanceData = document.getElementById('performanceData');
+        
+        // Update quick stats
+        document.getElementById('testsTaken').textContent = performances.length;
+        const avgScore = performances.length > 0 ? 
+            (performances.reduce((sum, perf) => sum + (perf.score / perf.totalMarks), 0) / performances.length * 100).toFixed(1) : 0;
+        document.getElementById('avgScore').textContent = avgScore + '%';
+        
+        performanceData.innerHTML = performances.map(perf => `
+            <div class="test-card">
+                <h3>${perf.testId.title}</h3>
+                <div class="metrics">
+                    <div class="metric-card">
+                        <div class="metric-value">${((perf.score / perf.totalMarks) * 100).toFixed(1)}%</div>
+                        <div>Score</div>
                     </div>
-                `).join('');
-            } catch (error) {
-                console.error('Failed to load performance:', error);
-            }
-        }
-
+                    <div class="metric-card">
+                        <div class="metric-value">${perf.timeTaken}m</div>
+                        <div>Time Taken</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Failed to load performance:', error);
+    }
+}
         async function getAIGuidance() {
-            const chapter = document.getElementById('chapterInput').value;
-            if (!chapter) return;
+    const chapter = document.getElementById('chapterInput').value;
+    if (!chapter) return;
 
-            try {
-                const response = await fetch(`/api/ai-guidance/${encodeURIComponent(chapter)}`);
-                const guidance = await response.json();
-                const guidanceResult = document.getElementById('guidanceResult');
-                guidanceResult.innerHTML = `
-                    <h4>AI Guidance for ${guidance.chapter}</h4>
-                    <div class="guidance-item">
-                        <i class="fas fa-lightbulb" style="color: var(--accent);"></i>
-                        <div>
-                            <strong>Key Topics:</strong> ${guidance.topics.join(', ')}
-                        </div>
-                    </div>
-                    <div class="guidance-item">
-                        <i class="fas fa-star" style="color: var(--secondary);"></i>
-                        <div>
-                            <strong>Recommendation:</strong> ${guidance.recommendation}
-                        </div>
-                    </div>
-                    <div class="guidance-item">
-                        <i class="fas fa-book" style="color: var(--primary);"></i>
-                        <div>
-                            <strong>Resources:</strong> ${guidance.resources.join(', ')}
-                        </div>
-                    </div>
-                `;
-            } catch (error) {
-                console.error('Failed to get AI guidance:', error);
-            }
-        }
+    try {
+        const response = await apiCall(`/api/ai-guidance/${encodeURIComponent(chapter)}`);
+        const guidance = await response.json();
+        const guidanceResult = document.getElementById('guidanceResult');
+        guidanceResult.innerHTML = `
+            <h4>AI Guidance for ${guidance.chapter}</h4>
+            <div class="guidance-item">
+                <i class="fas fa-lightbulb" style="color: var(--accent);"></i>
+                <div>
+                    <strong>Key Topics:</strong> ${guidance.topics.join(', ')}
+                </div>
+            </div>
+            <div class="guidance-item">
+                <i class="fas fa-star" style="color: var(--secondary);"></i>
+                <div>
+                    <strong>Recommendation:</strong> ${guidance.recommendation}
+                </div>
+            </div>
+            <div class="guidance-item">
+                <i class="fas fa-book" style="color: var(--primary);"></i>
+                <div>
+                    <strong>Resources:</strong> ${guidance.resources.join(', ')}
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Failed to get AI guidance:', error);
+    }
+}
+
 
         // Admin functions
         async function loadQuestions() {
-            try {
-                const response = await fetch('/api/questions');
-                allQuestions = await response.json();
-                const questionsList = document.getElementById('questionsList');
-                questionsList.innerHTML = '<h4>All Questions</h4>' + allQuestions.map(q => `
-                    <div class="test-card">
-                        <p><strong>Q:</strong> ${q.question}</p>
-                        <p><strong>Subject:</strong> ${q.subject} | <strong>Chapter:</strong> ${q.chapter}</p>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error('Failed to load questions:', error);
-            }
-        }
+    try {
+        const response = await apiCall('/api/questions');
+        allQuestions = await response.json();
+        const questionsList = document.getElementById('questionsList');
+        questionsList.innerHTML = '<h4>All Questions</h4>' + allQuestions.map(q => `
+            <div class="test-card">
+                <p><strong>Q:</strong> ${q.question}</p>
+                <p><strong>Subject:</strong> ${q.subject} | <strong>Chapter:</strong> ${q.chapter}</p>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Failed to load questions:', error);
+    }
+}
 
-        document.getElementById('questionForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const questionData = {
-                question: document.getElementById('questionText').value,
-                options: document.getElementById('questionOptions').value.split(','),
-                correctAnswer: parseInt(document.getElementById('correctAnswer').value),
-                explanation: "Detailed explanation will be provided",
-                subject: document.getElementById('questionSubject').value,
-                chapter: document.getElementById('questionChapter').value,
-                difficulty: "medium",
-                marks: 4
-            };
+       document.getElementById('questionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const questionData = {
+        question: document.getElementById('questionText').value,
+        options: document.getElementById('questionOptions').value.split(','),
+        correctAnswer: parseInt(document.getElementById('correctAnswer').value),
+        explanation: "Detailed explanation will be provided",
+        subject: document.getElementById('questionSubject').value,
+        chapter: document.getElementById('questionChapter').value,
+        difficulty: "medium",
+        marks: 4
+    };
 
-            try {
-                const response = await fetch('/api/questions', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(questionData)
-                });
-
-                if (response.ok) {
-                    alert('Question added successfully!');
-                    document.getElementById('questionForm').reset();
-                    loadQuestions();
-                } else {
-                    alert('Failed to add question');
-                }
-            } catch (error) {
-                alert('Failed to add question');
-            }
+    try {
+        const response = await apiCall('/api/questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(questionData)
         });
+
+        if (response.ok) {
+            alert('Question added successfully!');
+            document.getElementById('questionForm').reset();
+            loadQuestions();
+        } else {
+            alert('Failed to add question');
+        }
+    } catch (error) {
+        alert('Failed to add question');
+    }
+});
 
         function startTest(testId) {
             alert(`Advanced test interface would launch for test: ${testId}`);
