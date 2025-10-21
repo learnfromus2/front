@@ -596,6 +596,40 @@
             border-color: var(--primary);
         }
 
+        /* Mock Test Selection */
+        .mock-type-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mock-type-card {
+            background: var(--gray-50);
+            border: 2px solid var(--gray-300);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .mock-type-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .mock-type-card.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .mock-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
         /* Solution Section */
         .solution-section {
             margin-top: 2rem;
@@ -640,6 +674,10 @@
             }
 
             .class-subject-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .mock-type-selector {
                 grid-template-columns: 1fr;
             }
         }
@@ -741,7 +779,7 @@
 
             <!-- Navigation -->
             <div class="nav-tabs">
-                <div class="nav-tab active" onclick="showSection('tests')">
+                <div class="nav-tab active" onclick="showSection('mockTests')">
                     <i class="fas fa-file-alt"></i> Mock Tests
                 </div>
                 <div class="nav-tab" onclick="showSection('createTest')">
@@ -759,7 +797,7 @@
             </div>
 
             <!-- Content Sections -->
-            <div class="content-section active" id="testsSection">
+            <div class="content-section active" id="mockTestsSection">
                 <div class="card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                         <h2 class="card-title">Available Mock Tests</h2>
@@ -776,12 +814,26 @@
             <div class="content-section" id="createTestSection">
                 <div class="card">
                     <h2 class="card-title">Create Custom Test</h2>
+                    <div class="mock-type-selector">
+                        <div class="mock-type-card" id="jeeCard" onclick="selectMockType('jee')">
+                            <div class="mock-icon">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <h3>JEE Mock Test</h3>
+                            <p>Physics, Chemistry, Mathematics</p>
+                        </div>
+                        <div class="mock-type-card" id="neetCard" onclick="selectMockType('neet')">
+                            <div class="mock-icon">
+                                <i class="fas fa-stethoscope"></i>
+                            </div>
+                            <h3>NEET Mock Test</h3>
+                            <p>Physics, Chemistry, Biology</p>
+                        </div>
+                    </div>
                     <div class="test-creation-form">
                         <div class="form-group">
                             <label class="form-label">Class</label>
                             <select class="form-input" id="testClass">
-                                <option value="9">Class 9</option>
-                                <option value="10">Class 10</option>
                                 <option value="11">Class 11</option>
                                 <option value="12">Class 12</option>
                             </select>
@@ -789,15 +841,14 @@
                         <div class="form-group">
                             <label class="form-label">Subject</label>
                             <select class="form-input" id="testSubject">
-                                <option value="physics">Physics</option>
-                                <option value="chemistry">Chemistry</option>
-                                <option value="mathematics">Mathematics</option>
-                                <option value="biology">Biology</option>
+                                <!-- Subjects will be populated based on mock type -->
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Chapter</label>
-                            <input type="text" class="form-input" id="testChapter" placeholder="Enter chapter name">
+                            <select class="form-input" id="testChapter">
+                                <!-- Chapters will be populated based on subject -->
+                            </select>
                         </div>
                         <div class="form-group form-row">
                             <label class="form-label">Test Type</label>
@@ -881,7 +932,8 @@
                 <div class="card">
                     <h2 class="card-title">AI Learning Guidance</h2>
                     <div class="form-group">
-                        <input type="text" class="form-input" id="chapterInput" placeholder="Enter chapter/topic (e.g., Organic Chemistry, Calculus)">
+                        <label class="form-label">Ask a question or request guidance</label>
+                        <textarea class="form-input" id="aiQuery" rows="4" placeholder="Enter your question or topic (e.g., Explain organic chemistry reaction mechanisms, How to solve calculus problems, etc.)"></textarea>
                         <button class="btn btn-primary" onclick="getAIGuidance()" style="margin-top: 1rem; width: 100%;">
                             <i class="fas fa-magic"></i> Get AI Guidance
                         </button>
@@ -906,26 +958,30 @@
                             <h3 style="margin-bottom: 1rem;">Question Bank Management</h3>
                             <div class="test-creation-form">
                                 <div class="form-group">
+                                    <label class="form-label">Exam Type</label>
+                                    <select class="form-input" id="examType" onchange="updateSubjectsForAdmin()">
+                                        <option value="jee">JEE</option>
+                                        <option value="neet">NEET</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
                                     <label class="form-label">Class</label>
                                     <select class="form-input" id="questionClass">
-                                        <option value="9">Class 9</option>
-                                        <option value="10">Class 10</option>
                                         <option value="11">Class 11</option>
                                         <option value="12">Class 12</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Subject</label>
-                                    <select class="form-input" id="questionSubject">
-                                        <option value="physics">Physics</option>
-                                        <option value="chemistry">Chemistry</option>
-                                        <option value="mathematics">Mathematics</option>
-                                        <option value="biology">Biology</option>
+                                    <select class="form-input" id="questionSubject" onchange="updateChaptersForAdmin()">
+                                        <!-- Subjects will be populated based on exam type -->
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Chapter</label>
-                                    <input type="text" class="form-input" id="questionChapter" placeholder="Enter chapter name">
+                                    <select class="form-input" id="questionChapter">
+                                        <!-- Chapters will be populated based on subject -->
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Difficulty</label>
@@ -1003,30 +1059,22 @@
                 <div class="options-container" id="optionsContainer">
                     <!-- Options will be populated here -->
                 </div>
-                <div class="solution-section hidden" id="solutionSection">
-                    <div class="solution-title">Solution</div>
-                    <div id="solutionText"></div>
-                </div>
             </div>
             
             <div class="test-navigation">
-                <button class="btn btn-secondary" id="prevQuestion" onclick="previousQuestion()">
+                <button class="btn btn-secondary" id="prevBtn" onclick="prevQuestion()">
                     <i class="fas fa-arrow-left"></i> Previous
                 </button>
-                <div>
-                    <span id="currentQuestionNumber">1</span> of <span id="totalQuestions">10</span>
+                <div class="question-palette" id="questionPalette">
+                    <!-- Question numbers will be populated here -->
                 </div>
-                <button class="btn btn-primary" id="nextQuestion" onclick="nextQuestion()">
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
                     Next <i class="fas fa-arrow-right"></i>
                 </button>
             </div>
             
-            <div class="question-palette" id="questionPalette">
-                <!-- Question numbers will be populated here -->
-            </div>
-            
             <div style="text-align: center; margin-top: 2rem;">
-                <button class="btn btn-primary" onclick="submitTest()" style="width: auto; padding: 1rem 2rem;">
+                <button class="btn btn-primary" id="submitTestBtn" onclick="submitTest()" style="width: 200px;">
                     <i class="fas fa-paper-plane"></i> Submit Test
                 </button>
             </div>
@@ -1034,613 +1082,707 @@
     </div>
 
     <script>
-        // Enhanced question bank with solutions
-        const questionBank = {
-            physics: {
-                "9": {
-                    "Motion": {
-                        easy: [
-                            {
-                                text: "What is the SI unit of speed?",
-                                optionA: "m/s",
-                                optionB: "km/h",
-                                optionC: "m/s²",
-                                optionD: "km/s",
-                                correctAnswer: "A",
-                                solution: "Speed is defined as distance traveled per unit time. The SI unit of distance is meter (m) and time is second (s), so the SI unit of speed is meter per second (m/s)."
-                            },
-                            {
-                                text: "Which of the following is a vector quantity?",
-                                optionA: "Speed",
-                                optionB: "Distance",
-                                optionC: "Velocity",
-                                optionD: "Time",
-                                correctAnswer: "C",
-                                solution: "Velocity is a vector quantity because it has both magnitude and direction. Speed, distance, and time are scalar quantities as they have only magnitude."
-                            }
-                        ],
-                        medium: [
-                            {
-                                text: "A car accelerates from 20 m/s to 40 m/s in 5 seconds. What is its acceleration?",
-                                optionA: "2 m/s²",
-                                optionB: "4 m/s²",
-                                optionC: "6 m/s²",
-                                optionD: "8 m/s²",
-                                correctAnswer: "B",
-                                solution: "Acceleration = (Final velocity - Initial velocity) / Time = (40 - 20) / 5 = 20 / 5 = 4 m/s²"
-                            }
-                        ],
-                        hard: [
-                            {
-                                text: "A ball is thrown vertically upwards with a velocity of 49 m/s. Calculate the maximum height reached by the ball. (g = 9.8 m/s²)",
-                                optionA: "122.5 m",
-                                optionB: "245 m",
-                                optionC: "49 m",
-                                optionD: "98 m",
-                                correctAnswer: "A",
-                                solution: "Using the formula: h = u²/(2g) = (49)²/(2×9.8) = 2401/19.6 = 122.5 m"
-                            }
-                        ]
-                    },
-                    "Force and Laws of Motion": {
-                        easy: [
-                            {
-                                text: "Which law of motion is also called the law of inertia?",
-                                optionA: "First law",
-                                optionB: "Second law",
-                                optionC: "Third law",
-                                optionD: "Law of gravitation",
-                                correctAnswer: "A",
-                                solution: "Newton's first law of motion is also called the law of inertia. It states that an object at rest stays at rest and an object in motion stays in motion with the same speed and in the same direction unless acted upon by an unbalanced force."
-                            }
-                        ]
-                    }
-                },
-                "11": {
-                    "Kinematics": {
-                        easy: [
-                            {
-                                text: "The displacement of a particle is given by x = 3t² + 2t + 1. What is its acceleration?",
-                                optionA: "3 m/s²",
-                                optionB: "6 m/s²",
-                                optionC: "2 m/s²",
-                                optionD: "0 m/s²",
-                                correctAnswer: "B",
-                                solution: "Velocity v = dx/dt = 6t + 2, Acceleration a = dv/dt = 6 m/s²"
-                            }
-                        ]
-                    }
-                }
-            },
-            chemistry: {
-                "9": {
-                    "Atoms and Molecules": {
-                        easy: [
-                            {
-                                text: "What is the atomicity of oxygen molecule?",
-                                optionA: "1",
-                                optionB: "2",
-                                optionC: "3",
-                                optionD: "4",
-                                correctAnswer: "B",
-                                solution: "Oxygen molecule (O₂) consists of two oxygen atoms, so its atomicity is 2."
-                            }
-                        ]
-                    }
-                },
-                "11": {
-                    "Organic Chemistry": {
-                        medium: [
-                            {
-                                text: "Which of the following is an example of electrophilic substitution reaction?",
-                                optionA: "Nitration of benzene",
-                                optionB: "Addition of HBr to alkene",
-                                optionC: "Hydrolysis of ester",
-                                optionD: "Combustion of methane",
-                                correctAnswer: "A",
-                                solution: "Nitration of benzene is a classic example of electrophilic aromatic substitution where the electrophile (NO₂⁺) attacks the benzene ring."
-                            }
-                        ]
-                    }
-                }
-            },
-            mathematics: {
-                "9": {
-                    "Algebra": {
-                        easy: [
-                            {
-                                text: "What is the value of x in the equation 2x + 5 = 15?",
-                                optionA: "5",
-                                optionB: "10",
-                                optionC: "7.5",
-                                optionD: "2.5",
-                                correctAnswer: "A",
-                                solution: "2x + 5 = 15 ⇒ 2x = 15 - 5 ⇒ 2x = 10 ⇒ x = 5"
-                            }
-                        ]
-                    }
-                }
-            },
-            biology: {
-                "9": {
-                    "Cell Biology": {
-                        easy: [
-                            {
-                                text: "Which organelle is called the powerhouse of the cell?",
-                                optionA: "Nucleus",
-                                optionB: "Mitochondria",
-                                optionC: "Ribosome",
-                                optionD: "Golgi apparatus",
-                                correctAnswer: "B",
-                                solution: "Mitochondria are called the powerhouse of the cell because they produce ATP (adenosine triphosphate) through cellular respiration, which provides energy for various cellular activities."
-                            }
-                        ]
-                    }
-                }
-            }
-        };
-
-        // Application state
+        // Global variables
         let currentUser = null;
+        let currentRole = null;
+        let currentSection = 'mockTests';
+        let mockType = 'jee';
+        let testType = 'auto';
+        let difficulty = 'mixed';
         let currentTest = null;
         let currentQuestionIndex = 0;
-        let userAnswers = [];
         let testTimer = null;
         let timeRemaining = 0;
-        let testType = 'auto';
-        let selectedDifficulty = 'mixed';
-
-        // DOM Elements
-        const authContainer = document.getElementById('authContainer');
-        const dashboard = document.getElementById('dashboard');
-        const loginSection = document.getElementById('loginSection');
-        const registerSection = document.getElementById('registerSection');
-        const testsGrid = document.getElementById('testsGrid');
-        const adminTab = document.getElementById('adminTab');
-        const testInterface = document.getElementById('testInterface');
-        const availableQuestions = document.getElementById('availableQuestions');
-        const difficultySection = document.getElementById('difficultySection');
-        const manualSection = document.getElementById('manualSection');
+        let userAnswers = {};
+        let questionBank = {};
 
         // Initialize the application
         function init() {
             // Check if user is already logged in
             const savedUser = localStorage.getItem('currentUser');
-            if (savedUser) {
-                currentUser = JSON.parse(savedUser);
+            const savedRole = localStorage.getItem('currentRole');
+            
+            if (savedUser && savedRole) {
+                currentUser = savedUser;
+                currentRole = savedRole;
                 showDashboard();
             }
-
-            // Load sample tests
-            loadSampleTests();
+            
+            // Set up event listeners
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            
+            // Initialize mock type selection
+            selectMockType('jee');
+            updateSubjects();
+            updatePerformanceChart();
+            loadAvailableTests();
+            
+            // Load question bank from server
+            loadQuestionBank();
         }
 
-        // Auth functions
-        function showLogin() {
-            loginSection.classList.remove('hidden');
-            registerSection.classList.add('hidden');
+        // Load question bank from server
+        async function loadQuestionBank() {
+            try {
+                const response = await fetch('/api/questions/bank');
+                const data = await response.json();
+                if (data.success) {
+                    questionBank = data.questionBank;
+                    console.log('Question bank loaded successfully');
+                }
+            } catch (error) {
+                console.error('Error loading question bank:', error);
+                // Load default question bank
+                loadDefaultQuestionBank();
+            }
         }
 
-        function showRegister() {
-            loginSection.classList.add('hidden');
-            registerSection.classList.remove('hidden');
+        // Load default question bank (fallback)
+        function loadDefaultQuestionBank() {
+            questionBank = {
+                jee: {
+                    physics: {
+                        '11': {
+                            'Physical World and Measurement': [
+                                { 
+                                    id: 1, 
+                                    text: 'Which of the following is not a fundamental unit?', 
+                                    options: ['meter', 'second', 'kilogram', 'newton'], 
+                                    answer: 'D', 
+                                    difficulty: 'easy',
+                                    solution: 'Newton is a derived unit, not a fundamental unit. The fundamental units in SI system are meter, second, kilogram, ampere, kelvin, mole, and candela.'
+                                }
+                            ],
+                            'Kinematics': [
+                                { 
+                                    id: 2, 
+                                    text: 'A particle moves along a straight line with velocity v = 3t² - 6t m/s. The acceleration at t=2s is:', 
+                                    options: ['0 m/s²', '6 m/s²', '12 m/s²', '18 m/s²'], 
+                                    answer: 'B', 
+                                    difficulty: 'medium',
+                                    solution: 'Acceleration a = dv/dt = 6t - 6. At t=2s, a = 6(2) - 6 = 12 - 6 = 6 m/s²'
+                                }
+                            ]
+                        },
+                        '12': {
+                            'Electrostatics': [
+                                { 
+                                    id: 3, 
+                                    text: 'Two point charges +4q and -q are placed at a distance r apart. The distance from +4q where the electric field is zero is:', 
+                                    options: ['r/3 from +4q', 'r/3 from -q', '2r/3 from +4q', 'r/2 from +4q'], 
+                                    answer: 'C', 
+                                    difficulty: 'hard',
+                                    solution: 'Let the point be at distance x from +4q. Then E due to +4q = k(4q)/x², E due to -q = k(q)/(r-x)². Setting them equal: 4/x² = 1/(r-x)² => 2/x = 1/(r-x) => 2r - 2x = x => 3x = 2r => x = 2r/3 from +4q.'
+                                }
+                            ]
+                        }
+                    },
+                    chemistry: {
+                        '11': {
+                            'Some Basic Concepts of Chemistry': [
+                                { 
+                                    id: 4, 
+                                    text: 'The number of moles of oxygen in 1L of air containing 21% oxygen by volume under standard conditions is:', 
+                                    options: ['0.0093 mol', '0.186 mol', '0.21 mol', '2.1 mol'], 
+                                    answer: 'A', 
+                                    difficulty: 'medium',
+                                    solution: 'Volume of O₂ in 1L air = 210 mL = 0.21 L. At STP, 1 mole occupies 22.4 L. So moles of O₂ = 0.21/22.4 = 0.009375 mol ≈ 0.0093 mol'
+                                }
+                            ]
+                        },
+                        '12': {
+                            'Solutions': [
+                                { 
+                                    id: 5, 
+                                    text: 'The boiling point of 0.1 molal aqueous solution of a non-volatile solute is 100.052°C. The value of Kb for water is:', 
+                                    options: ['0.26 K kg mol⁻¹', '0.52 K kg mol⁻¹', '1.86 K kg mol⁻¹', '5.2 K kg mol⁻¹'], 
+                                    answer: 'B', 
+                                    difficulty: 'easy',
+                                    solution: 'ΔTb = Kb × m => 0.052 = Kb × 0.1 => Kb = 0.052/0.1 = 0.52 K kg mol⁻¹'
+                                }
+                            ]
+                        }
+                    },
+                    mathematics: {
+                        '11': {
+                            'Sets, Relations and Functions': [
+                                { 
+                                    id: 6, 
+                                    text: 'If A = {1, 2, 3} and B = {2, 3, 4}, then A ∩ B is:', 
+                                    options: ['{1, 2}', '{2, 3}', '{3, 4}', '{1, 4}'], 
+                                    answer: 'B', 
+                                    difficulty: 'easy',
+                                    solution: 'A ∩ B is the set of elements common to both A and B. Common elements are 2 and 3, so A ∩ B = {2, 3}'
+                                }
+                            ]
+                        },
+                        '12': {
+                            'Matrices and Determinants': [
+                                { 
+                                    id: 7, 
+                                    text: 'If A is a square matrix of order 3 and |A| = 5, then |adj A| is:', 
+                                    options: ['5', '25', '125', '625'], 
+                                    answer: 'B', 
+                                    difficulty: 'medium',
+                                    solution: 'For a square matrix of order n, |adj A| = |A|ⁿ⁻¹. Here n=3, so |adj A| = 5² = 25'
+                                }
+                            ]
+                        }
+                    }
+                },
+                neet: {
+                    physics: {
+                        '11': {
+                            'Physical World and Measurement': [
+                                { 
+                                    id: 8, 
+                                    text: 'Which of the following is not a fundamental unit?', 
+                                    options: ['meter', 'second', 'kilogram', 'newton'], 
+                                    answer: 'D', 
+                                    difficulty: 'easy',
+                                    solution: 'Newton is a derived unit, not a fundamental unit. The fundamental units in SI system are meter, second, kilogram, ampere, kelvin, mole, and candela.'
+                                }
+                            ]
+                        },
+                        '12': {
+                            'Electrostatics': [
+                                { 
+                                    id: 9, 
+                                    text: 'Two point charges +4q and -q are placed at a distance r apart. The distance from +4q where the electric field is zero is:', 
+                                    options: ['r/3 from +4q', 'r/3 from -q', '2r/3 from +4q', 'r/2 from +4q'], 
+                                    answer: 'C', 
+                                    difficulty: 'hard',
+                                    solution: 'Let the point be at distance x from +4q. Then E due to +4q = k(4q)/x², E due to -q = k(q)/(r-x)². Setting them equal: 4/x² = 1/(r-x)² => 2/x = 1/(r-x) => 2r - 2x = x => 3x = 2r => x = 2r/3 from +4q.'
+                                }
+                            ]
+                        }
+                    },
+                    chemistry: {
+                        '11': {
+                            'Some Basic Concepts of Chemistry': [
+                                { 
+                                    id: 10, 
+                                    text: 'The number of moles of oxygen in 1L of air containing 21% oxygen by volume under standard conditions is:', 
+                                    options: ['0.0093 mol', '0.186 mol', '0.21 mol', '2.1 mol'], 
+                                    answer: 'A', 
+                                    difficulty: 'medium',
+                                    solution: 'Volume of O₂ in 1L air = 210 mL = 0.21 L. At STP, 1 mole occupies 22.4 L. So moles of O₂ = 0.21/22.4 = 0.009375 mol ≈ 0.0093 mol'
+                                }
+                            ]
+                        },
+                        '12': {
+                            'Solutions': [
+                                { 
+                                    id: 11, 
+                                    text: 'The boiling point of 0.1 molal aqueous solution of a non-volatile solute is 100.052°C. The value of Kb for water is:', 
+                                    options: ['0.26 K kg mol⁻¹', '0.52 K kg mol⁻¹', '1.86 K kg mol⁻¹', '5.2 K kg mol⁻¹'], 
+                                    answer: 'B', 
+                                    difficulty: 'easy',
+                                    solution: 'ΔTb = Kb × m => 0.052 = Kb × 0.1 => Kb = 0.052/0.1 = 0.52 K kg mol⁻¹'
+                                }
+                            ]
+                        }
+                    },
+                    biology: {
+                        '11': {
+                            'Diversity in Living World': [
+                                { 
+                                    id: 12, 
+                                    text: 'Which of the following is not a characteristic of living organisms?', 
+                                    options: ['Growth', 'Reproduction', 'Metabolism', 'Isolated metabolic reactions'], 
+                                    answer: 'D', 
+                                    difficulty: 'easy',
+                                    solution: 'Isolated metabolic reactions in vitro are not living things but living reactions. Growth, reproduction, and metabolism are defining characteristics of living organisms.'
+                                }
+                            ]
+                        },
+                        '12': {
+                            'Reproduction': [
+                                { 
+                                    id: 13, 
+                                    text: 'In humans, at the end of the first meiotic division, the male germ cells differentiate into the:', 
+                                    options: ['Spermatids', 'Spermatogonia', 'Primary spermatocytes', 'Secondary spermatocytes'], 
+                                    answer: 'D', 
+                                    difficulty: 'medium',
+                                    solution: 'The first meiotic division in male germ cells produces secondary spermatocytes from primary spermatocytes. Spermatids are formed after the second meiotic division.'
+                                }
+                            ]
+                        }
+                    }
+                }
+            };
         }
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Handle login
+        async function handleLogin(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const role = document.getElementById('role').value;
-
-            // Simple authentication (in real app, this would be server-side)
-            if (username && password) {
-                currentUser = { username, role };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                showDashboard();
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password, role })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentUser = data.user.username;
+                    currentRole = data.user.role;
+                    
+                    // Save to localStorage
+                    localStorage.setItem('currentUser', currentUser);
+                    localStorage.setItem('currentRole', currentRole);
+                    localStorage.setItem('authToken', data.token);
+                    
+                    showDashboard();
+                } else {
+                    alert(data.error || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed. Please try again.');
             }
-        });
+        }
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        // Handle registration
+        async function handleRegister(e) {
             e.preventDefault();
             const username = document.getElementById('regUsername').value;
             const password = document.getElementById('regPassword').value;
             const role = document.getElementById('regRole').value;
-
-            // Simple registration (in real app, this would be server-side)
-            if (username && password) {
-                currentUser = { username, role };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                showDashboard();
+            
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password, role })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Registration successful! Please login with your credentials.');
+                    showLogin();
+                } else {
+                    alert(data.error || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed. Please try again.');
             }
-        });
+        }
 
+        // Show login form
+        function showLogin() {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('registerSection').classList.add('hidden');
+        }
+
+        // Show register form
+        function showRegister() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('registerSection').classList.remove('hidden');
+        }
+
+        // Show dashboard
         function showDashboard() {
-            authContainer.style.display = 'none';
-            dashboard.style.display = 'block';
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
             
             // Update user info
-            document.getElementById('userName').textContent = currentUser.username;
-            document.getElementById('userRole').textContent = currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1);
-            document.getElementById('userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+            document.getElementById('userName').textContent = currentUser;
+            document.getElementById('userRole').textContent = currentRole.charAt(0).toUpperCase() + currentRole.slice(1);
+            document.getElementById('userAvatar').textContent = currentUser.charAt(0).toUpperCase();
             
-            // Show admin tab only for admin users
-            if (currentUser.role === 'admin') {
-                adminTab.classList.remove('hidden');
+            // Show/hide admin tab based on role
+            if (currentRole === 'admin') {
+                document.getElementById('adminTab').classList.remove('hidden');
             } else {
-                adminTab.classList.add('hidden');
+                document.getElementById('adminTab').classList.add('hidden');
             }
             
-            // Load user data
-            loadUserData();
+            // Load initial data
+            loadAvailableTests();
+            updatePerformanceMetrics();
         }
 
+        // Logout
         function logout() {
             currentUser = null;
+            currentRole = null;
             localStorage.removeItem('currentUser');
-            authContainer.style.display = 'flex';
-            dashboard.style.display = 'none';
-            showLogin();
+            localStorage.removeItem('currentRole');
+            localStorage.removeItem('authToken');
+            location.reload();
         }
 
-        // Section navigation
-        function showSection(sectionName) {
+        // Show section
+        function showSection(section) {
             // Hide all sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active');
+            document.querySelectorAll('.content-section').forEach(el => {
+                el.classList.remove('active');
             });
             
             // Remove active class from all tabs
-            document.querySelectorAll('.nav-tab').forEach(tab => {
-                tab.classList.remove('active');
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.classList.remove('active');
             });
             
             // Show selected section
-            document.getElementById(sectionName + 'Section').classList.add('active');
+            document.getElementById(section + 'Section').classList.add('active');
             
             // Add active class to clicked tab
             event.target.classList.add('active');
             
+            currentSection = section;
+            
             // Load section-specific data
-            if (sectionName === 'tests') {
-                loadTests();
-            } else if (sectionName === 'performance') {
-                loadPerformanceData();
-            } else if (sectionName === 'admin') {
-                loadAdminData();
+            if (section === 'mockTests') {
+                loadAvailableTests();
+            } else if (section === 'performance') {
+                updatePerformanceMetrics();
+            } else if (section === 'admin') {
+                updateSubjectsForAdmin();
+                loadQuestionsForAdmin();
+                loadTestsForAdmin();
             }
         }
 
-        // Test functions
-        function loadSampleTests() {
-            const sampleTests = [
-                {
-                    id: 1,
-                    title: "Class 9 Physics - Motion",
-                    subject: "Physics",
-                    class: "9",
-                    chapter: "Motion",
-                    difficulty: "mixed",
-                    duration: 30,
-                    questionCount: 10
-                },
-                {
-                    id: 2,
-                    title: "Class 11 Chemistry - Organic Chemistry",
-                    subject: "Chemistry",
-                    class: "11",
-                    chapter: "Organic Chemistry",
-                    difficulty: "medium",
-                    duration: 45,
-                    questionCount: 15
-                },
-                {
-                    id: 3,
-                    title: "Class 9 Mathematics - Algebra",
-                    subject: "Mathematics",
-                    class: "9",
-                    chapter: "Algebra",
-                    difficulty: "easy",
-                    duration: 25,
-                    questionCount: 8
-                },
-                {
-                    id: 4,
-                    title: "Class 9 Biology - Cell Biology",
-                    subject: "Biology",
-                    class: "9",
-                    chapter: "Cell Biology",
-                    difficulty: "mixed",
-                    duration: 20,
-                    questionCount: 6
-                }
-            ];
+        // Select mock type (JEE/NEET)
+        function selectMockType(type) {
+            mockType = type;
             
-            localStorage.setItem('sampleTests', JSON.stringify(sampleTests));
+            // Update UI
+            document.getElementById('jeeCard').classList.remove('selected');
+            document.getElementById('neetCard').classList.remove('selected');
+            document.getElementById(type + 'Card').classList.add('selected');
+            
+            // Update subjects
+            updateSubjects();
         }
 
-        function loadTests() {
-            const tests = JSON.parse(localStorage.getItem('sampleTests')) || [];
-            testsGrid.innerHTML = '';
+        // Update subjects based on mock type
+        function updateSubjects() {
+            const subjectSelect = document.getElementById('testSubject');
+            subjectSelect.innerHTML = '';
             
-            tests.forEach(test => {
-                const testCard = document.createElement('div');
-                testCard.className = 'test-card';
-                testCard.innerHTML = `
-                    <div class="test-badge">${test.subject}</div>
-                    <h3>${test.title}</h3>
-                    <p>Class: ${test.class}</p>
-                    <p>Chapter: ${test.chapter}</p>
-                    <p>Difficulty: ${test.difficulty}</p>
-                    <p>Duration: ${test.duration} min</p>
-                    <p>Questions: ${test.questionCount}</p>
-                    <button class="btn btn-primary" onclick="startTest(${test.id})" style="margin-top: 1rem; width: 100%;">
-                        Start Test
-                    </button>
-                `;
-                testsGrid.appendChild(testCard);
+            let subjects = [];
+            if (mockType === 'jee') {
+                subjects = ['physics', 'chemistry', 'mathematics'];
+            } else if (mockType === 'neet') {
+                subjects = ['physics', 'chemistry', 'biology'];
+            }
+            
+            subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = subject.charAt(0).toUpperCase() + subject.slice(1);
+                subjectSelect.appendChild(option);
             });
+            
+            // Update chapters
+            updateChapters();
         }
 
-        function refreshTests() {
-            loadTests();
+        // Update chapters based on subject and class
+        function updateChapters() {
+            const classSelect = document.getElementById('testClass');
+            const subjectSelect = document.getElementById('testSubject');
+            const chapterSelect = document.getElementById('testChapter');
+            
+            const selectedClass = classSelect.value;
+            const selectedSubject = subjectSelect.value;
+            
+            chapterSelect.innerHTML = '';
+            
+            if (questionBank[mockType] && questionBank[mockType][selectedSubject] && questionBank[mockType][selectedSubject][selectedClass]) {
+                const chapters = Object.keys(questionBank[mockType][selectedSubject][selectedClass]);
+                
+                chapters.forEach(chapter => {
+                    const option = document.createElement('option');
+                    option.value = chapter;
+                    option.textContent = chapter;
+                    chapterSelect.appendChild(option);
+                });
+            }
+            
+            // Update available questions for manual selection
+            if (testType === 'manual') {
+                updateAvailableQuestions();
+            }
         }
 
-        // Test creation functions
+        // Select test type (auto/manual)
         function selectTestType(type) {
             testType = type;
-            document.querySelectorAll('[data-level]').forEach(el => {
+            
+            // Update UI
+            document.querySelectorAll('.difficulty-option[data-level]').forEach(el => {
                 el.classList.remove('selected');
             });
-            event.target.classList.add('selected');
+            document.querySelector(`.difficulty-option[data-level="${type}"]`).classList.add('selected');
             
+            // Show/hide sections
             if (type === 'auto') {
-                difficultySection.classList.remove('hidden');
-                manualSection.classList.add('hidden');
+                document.getElementById('difficultySection').classList.remove('hidden');
+                document.getElementById('manualSection').classList.add('hidden');
             } else {
-                difficultySection.classList.add('hidden');
-                manualSection.classList.remove('hidden');
-                loadAvailableQuestions();
+                document.getElementById('difficultySection').classList.add('hidden');
+                document.getElementById('manualSection').classList.remove('hidden');
+                updateAvailableQuestions();
             }
         }
 
+        // Select difficulty level
         function selectDifficulty(level) {
-            selectedDifficulty = level;
-            document.querySelectorAll('[data-level]').forEach(el => {
+            difficulty = level;
+            
+            // Update UI
+            document.querySelectorAll('.difficulty-option[data-level]').forEach(el => {
                 el.classList.remove('selected');
             });
-            event.target.classList.add('selected');
+            document.querySelector(`.difficulty-option[data-level="${level}"]`).classList.add('selected');
         }
 
-        function loadAvailableQuestions() {
-            const subject = document.getElementById('testSubject').value;
-            const classLevel = document.getElementById('testClass').value;
-            const chapter = document.getElementById('testChapter').value;
+        // Update available questions for manual selection
+        function updateAvailableQuestions() {
+            const classSelect = document.getElementById('testClass');
+            const subjectSelect = document.getElementById('testSubject');
+            const chapterSelect = document.getElementById('testChapter');
             
-            availableQuestions.innerHTML = '';
+            const selectedClass = classSelect.value;
+            const selectedSubject = subjectSelect.value;
+            const selectedChapter = chapterSelect.value;
             
-            if (questionBank[subject] && questionBank[subject][classLevel] && questionBank[subject][classLevel][chapter]) {
-                const chapterQuestions = questionBank[subject][classLevel][chapter];
+            const questionsContainer = document.getElementById('availableQuestions');
+            questionsContainer.innerHTML = '';
+            
+            if (questionBank[mockType] && questionBank[mockType][selectedSubject] && 
+                questionBank[mockType][selectedSubject][selectedClass] && 
+                questionBank[mockType][selectedSubject][selectedClass][selectedChapter]) {
                 
-                Object.keys(chapterQuestions).forEach(difficulty => {
-                    chapterQuestions[difficulty].forEach((question, index) => {
-                        const questionItem = document.createElement('div');
-                        questionItem.className = 'question-item';
-                        questionItem.innerHTML = `
-                            <div class="question-text">${question.text}</div>
-                            <div class="question-difficulty difficulty-${difficulty}">${difficulty}</div>
-                            <input type="checkbox" onchange="toggleQuestionSelection('${subject}', ${classLevel}, '${chapter}', '${difficulty}', ${index})">
-                        `;
-                        availableQuestions.appendChild(questionItem);
-                    });
+                const questions = questionBank[mockType][selectedSubject][selectedClass][selectedChapter];
+                
+                questions.forEach(question => {
+                    const questionItem = document.createElement('div');
+                    questionItem.className = 'question-item';
+                    
+                    const questionText = document.createElement('div');
+                    questionText.className = 'question-text';
+                    questionText.textContent = question.text;
+                    
+                    const questionDifficulty = document.createElement('div');
+                    questionDifficulty.className = `question-difficulty difficulty-${question.difficulty}`;
+                    questionDifficulty.textContent = question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1);
+                    
+                    const questionCheckbox = document.createElement('input');
+                    questionCheckbox.type = 'checkbox';
+                    questionCheckbox.value = question.id;
+                    
+                    questionItem.appendChild(questionText);
+                    questionItem.appendChild(questionDifficulty);
+                    questionItem.appendChild(questionCheckbox);
+                    
+                    questionsContainer.appendChild(questionItem);
                 });
             } else {
-                availableQuestions.innerHTML = '<p>No questions available for the selected criteria.</p>';
+                questionsContainer.innerHTML = '<p>No questions available for the selected criteria.</p>';
             }
         }
 
-        function toggleQuestionSelection(subject, classLevel, chapter, difficulty, index) {
-            // Implementation for manual question selection
-            console.log('Toggling question:', subject, classLevel, chapter, difficulty, index);
-        }
-
-        function generateCustomTest() {
-            const subject = document.getElementById('testSubject').value;
-            const classLevel = document.getElementById('testClass').value;
-            const chapter = document.getElementById('testChapter').value;
+        // Generate custom test
+        async function generateCustomTest() {
+            const classSelect = document.getElementById('testClass');
+            const subjectSelect = document.getElementById('testSubject');
+            const chapterSelect = document.getElementById('testChapter');
             const questionCount = parseInt(document.getElementById('questionCount').value);
             const duration = parseInt(document.getElementById('testDuration').value);
+            
+            const selectedClass = classSelect.value;
+            const selectedSubject = subjectSelect.value;
+            const selectedChapter = chapterSelect.value;
             
             let questions = [];
             
             if (testType === 'auto') {
                 // Auto-generate based on difficulty
-                if (questionBank[subject] && questionBank[subject][classLevel] && questionBank[subject][classLevel][chapter]) {
-                    const chapterQuestions = questionBank[subject][classLevel][chapter];
+                if (questionBank[mockType] && questionBank[mockType][selectedSubject] && 
+                    questionBank[mockType][selectedSubject][selectedClass] && 
+                    questionBank[mockType][selectedSubject][selectedClass][selectedChapter]) {
                     
-                    if (selectedDifficulty === 'mixed') {
-                        // Mix questions from all difficulty levels
-                        Object.keys(chapterQuestions).forEach(difficulty => {
-                            questions = questions.concat(chapterQuestions[difficulty]);
-                        });
-                    } else {
-                        questions = chapterQuestions[selectedDifficulty] || [];
+                    let availableQuestions = questionBank[mockType][selectedSubject][selectedClass][selectedChapter];
+                    
+                    // Filter by difficulty if not mixed
+                    if (difficulty !== 'mixed') {
+                        availableQuestions = availableQuestions.filter(q => q.difficulty === difficulty);
                     }
                     
-                    // Limit to requested number of questions
-                    questions = questions.slice(0, questionCount);
+                    // Shuffle and select required number of questions
+                    availableQuestions = shuffleArray(availableQuestions);
+                    questions = availableQuestions.slice(0, Math.min(questionCount, availableQuestions.length));
                 }
             } else {
-                // Manual selection (simplified - in real app, track selected questions)
-                if (questionBank[subject] && questionBank[subject][classLevel] && questionBank[subject][classLevel][chapter]) {
-                    const chapterQuestions = questionBank[subject][classLevel][chapter];
-                    Object.keys(chapterQuestions).forEach(difficulty => {
-                        questions = questions.concat(chapterQuestions[difficulty]);
-                    });
-                    questions = questions.slice(0, questionCount);
+                // Manual selection
+                const selectedQuestions = Array.from(document.querySelectorAll('#availableQuestions input:checked'))
+                    .map(cb => parseInt(cb.value));
+                
+                if (questionBank[mockType] && questionBank[mockType][selectedSubject] && 
+                    questionBank[mockType][selectedSubject][selectedClass] && 
+                    questionBank[mockType][selectedSubject][selectedClass][selectedChapter]) {
+                    
+                    const allQuestions = questionBank[mockType][selectedSubject][selectedClass][selectedChapter];
+                    questions = allQuestions.filter(q => selectedQuestions.includes(q.id));
                 }
             }
             
-            if (questions.length > 0) {
-                const test = {
-                    id: Date.now(),
-                    title: `Custom Test - ${subject} Class ${classLevel} - ${chapter}`,
-                    subject: subject,
-                    class: classLevel,
-                    chapter: chapter,
-                    difficulty: selectedDifficulty,
-                    duration: duration,
-                    questions: questions
-                };
-                
-                startCustomTest(test);
-            } else {
+            if (questions.length === 0) {
                 alert('No questions available for the selected criteria. Please try different options.');
+                return;
             }
+            
+            // Create test object
+            const test = {
+                id: Date.now(),
+                title: `${mockType.toUpperCase()} ${selectedSubject.charAt(0).toUpperCase() + selectedSubject.slice(1)} Test - ${selectedChapter}`,
+                type: mockType,
+                subject: selectedSubject,
+                chapter: selectedChapter,
+                class: selectedClass,
+                questions: questions,
+                duration: duration,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Start the test
+            startTest(test);
         }
 
-        function startTest(testId) {
-            const tests = JSON.parse(localStorage.getItem('sampleTests')) || [];
-            const test = tests.find(t => t.id === testId);
-            
-            if (test) {
-                // For sample tests, generate questions from question bank
-                const questions = generateQuestionsForTest(test);
-                test.questions = questions;
-                startCustomTest(test);
+        // Shuffle array (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
             }
+            return newArray;
         }
 
-        function generateQuestionsForTest(test) {
-            let questions = [];
-            
-            if (questionBank[test.subject] && questionBank[test.subject][test.class] && questionBank[test.subject][test.class][test.chapter]) {
-                const chapterQuestions = questionBank[test.subject][test.class][test.chapter];
+        // Load available tests
+        async function loadAvailableTests() {
+            try {
+                const response = await fetch('/api/tests');
+                const data = await response.json();
                 
-                if (test.difficulty === 'mixed') {
-                    Object.keys(chapterQuestions).forEach(difficulty => {
-                        questions = questions.concat(chapterQuestions[difficulty]);
-                    });
+                if (data.success) {
+                    displayTests(data.tests);
                 } else {
-                    questions = chapterQuestions[test.difficulty] || [];
+                    // Fallback to sample tests
+                    loadSampleTests();
                 }
-                
-                // Limit to requested number of questions
-                questions = questions.slice(0, test.questionCount);
+            } catch (error) {
+                console.error('Error loading tests:', error);
+                // Fallback to sample tests
+                loadSampleTests();
             }
-            
-            return questions;
         }
 
-        function startCustomTest(test) {
+        // Display tests
+        function displayTests(tests) {
+            const testsGrid = document.getElementById('testsGrid');
+            testsGrid.innerHTML = '';
+            
+            tests.forEach(test => {
+                const testCard = document.createElement('div');
+                testCard.className = 'test-card';
+                testCard.onclick = () => startTest(test);
+                
+                testCard.innerHTML = `
+                    <div class="test-badge">${test.type.toUpperCase()}</div>
+                    <h3>${test.title}</h3>
+                    <p><strong>Class:</strong> ${test.class}</p>
+                    <p><strong>Questions:</strong> ${test.questions ? test.questions.length : test.questionCount}</p>
+                    <p><strong>Duration:</strong> ${test.duration} min</p>
+                    <p><strong>Difficulty:</strong> ${test.difficulty ? test.difficulty.charAt(0).toUpperCase() + test.difficulty.slice(1) : 'Mixed'}</p>
+                    <div style="margin-top: 1rem;">
+                        <button class="btn btn-primary" style="width: 100%;">Start Test</button>
+                    </div>
+                `;
+                
+                testsGrid.appendChild(testCard);
+            });
+        }
+
+        // Load sample tests (fallback)
+        function loadSampleTests() {
+            const sampleTests = [
+                {
+                    id: 1,
+                    title: 'JEE Physics - Electrostatics',
+                    subject: 'physics',
+                    type: 'jee',
+                    class: '12',
+                    chapter: 'Electrostatics',
+                    questionCount: 15,
+                    duration: 30,
+                    difficulty: 'mixed'
+                },
+                {
+                    id: 2,
+                    title: 'NEET Biology - Reproduction',
+                    subject: 'biology',
+                    type: 'neet',
+                    class: '12',
+                    chapter: 'Reproduction',
+                    questionCount: 20,
+                    duration: 40,
+                    difficulty: 'mixed'
+                }
+            ];
+            
+            displayTests(sampleTests);
+        }
+
+        // Start test
+        function startTest(test) {
             currentTest = test;
             currentQuestionIndex = 0;
-            userAnswers = new Array(test.questions.length).fill(null);
+            userAnswers = {};
             timeRemaining = test.duration * 60; // Convert to seconds
             
             // Show test interface
-            dashboard.style.display = 'none';
-            testInterface.classList.remove('hidden');
+            document.getElementById('testInterface').classList.remove('hidden');
+            document.getElementById('dashboard').style.display = 'none';
             
             // Initialize test
-            displayQuestion();
-            updateQuestionPalette();
-            startTimer();
-        }
-
-        function displayQuestion() {
-            const question = currentTest.questions[currentQuestionIndex];
-            document.getElementById('currentQuestionText').textContent = question.text;
-            document.getElementById('currentQuestionNumber').textContent = currentQuestionIndex + 1;
-            document.getElementById('totalQuestions').textContent = currentTest.questions.length;
-            document.getElementById('testTitle').textContent = currentTest.title;
-            
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.innerHTML = '';
-            
-            const options = [
-                { letter: 'A', text: question.optionA },
-                { letter: 'B', text: question.optionB },
-                { letter: 'C', text: question.optionC },
-                { letter: 'D', text: question.optionD }
-            ];
-            
-            options.forEach(option => {
-                const optionElement = document.createElement('div');
-                optionElement.className = 'option';
-                if (userAnswers[currentQuestionIndex] === option.letter) {
-                    optionElement.classList.add('selected');
-                }
-                optionElement.innerHTML = `
-                    <strong>${option.letter}.</strong> ${option.text}
-                `;
-                optionElement.onclick = () => selectOption(option.letter);
-                optionsContainer.appendChild(optionElement);
-            });
-            
-            // Update navigation buttons
-            document.getElementById('prevQuestion').disabled = currentQuestionIndex === 0;
-            document.getElementById('nextQuestion').disabled = currentQuestionIndex === currentTest.questions.length - 1;
-            
-            // Hide solution initially
-            document.getElementById('solutionSection').classList.add('hidden');
-        }
-
-        function selectOption(option) {
-            userAnswers[currentQuestionIndex] = option;
-            displayQuestion(); // Refresh to show selection
-            updateQuestionPalette();
-        }
-
-        function updateQuestionPalette() {
-            const palette = document.getElementById('questionPalette');
-            palette.innerHTML = '';
-            
-            for (let i = 0; i < currentTest.questions.length; i++) {
-                const paletteItem = document.createElement('div');
-                paletteItem.className = 'palette-item';
-                if (userAnswers[i] !== null) {
-                    paletteItem.classList.add('answered');
-                }
-                if (i === currentQuestionIndex) {
-                    paletteItem.classList.add('current');
-                }
-                paletteItem.textContent = i + 1;
-                paletteItem.onclick = () => goToQuestion(i);
-                palette.appendChild(paletteItem);
-            }
-        }
-
-        function goToQuestion(index) {
-            currentQuestionIndex = index;
-            displayQuestion();
-        }
-
-        function previousQuestion() {
-            if (currentQuestionIndex > 0) {
-                currentQuestionIndex--;
-                displayQuestion();
-            }
-        }
-
-        function nextQuestion() {
-            if (currentQuestionIndex < currentTest.questions.length - 1) {
-                currentQuestionIndex++;
-                displayQuestion();
-            }
-        }
-
-        function startTimer() {
+            document.getElementById('testTitle').textContent = test.title;
             updateTimerDisplay();
-            testTimer = setInterval(() => {
-                timeRemaining--;
-                updateTimerDisplay();
-                
-                if (timeRemaining <= 0) {
-                    submitTest();
-                }
-            }, 1000);
+            showQuestion(currentQuestionIndex);
+            updateQuestionPalette();
+            
+            // Start timer
+            testTimer = setInterval(updateTimer, 1000);
         }
 
+        // Update timer
+        function updateTimer() {
+            timeRemaining--;
+            updateTimerDisplay();
+            
+            if (timeRemaining <= 0) {
+                submitTest();
+            }
+        }
+
+        // Update timer display
         function updateTimerDisplay() {
             const minutes = Math.floor(timeRemaining / 60);
             const seconds = timeRemaining % 60;
@@ -1648,248 +1790,361 @@
                 `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
-        function submitTest() {
-            clearInterval(testTimer);
+        // Show question
+        function showQuestion(index) {
+            if (!currentTest || !currentTest.questions[index]) return;
             
-            // Calculate score
-            let score = 0;
-            currentTest.questions.forEach((question, index) => {
-                if (userAnswers[index] === question.correctAnswer) {
-                    score++;
+            const question = currentTest.questions[index];
+            document.getElementById('currentQuestionText').textContent = `${index + 1}. ${question.text}`;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, i) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (userAnswers[question.id] === String.fromCharCode(65 + i)) {
+                    optionElement.classList.add('selected');
                 }
+                optionElement.textContent = `${String.fromCharCode(65 + i)}. ${option}`;
+                optionElement.onclick = () => selectOption(String.fromCharCode(65 + i));
+                optionsContainer.appendChild(optionElement);
             });
             
-            const percentage = (score / currentTest.questions.length * 100).toFixed(1);
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === currentTest.questions.length - 1;
             
-            // Save test result
-            const testResult = {
-                testId: currentTest.id,
-                testTitle: currentTest.title,
-                score: score,
-                totalQuestions: currentTest.questions.length,
-                percentage: percentage,
-                timestamp: new Date().toISOString(),
-                answers: userAnswers
-            };
-            
-            saveTestResult(testResult);
-            
-            // Show results
-            alert(`Test submitted!\nYour score: ${score}/${currentTest.questions.length} (${percentage}%)`);
-            
-            // Return to dashboard
-            testInterface.classList.add('hidden');
-            dashboard.style.display = 'block';
-            showSection('performance');
+            // Update palette
+            updateQuestionPalette();
         }
 
-        function saveTestResult(result) {
-            let userResults = JSON.parse(localStorage.getItem(`testResults_${currentUser.username}`)) || [];
-            userResults.push(result);
-            localStorage.setItem(`testResults_${currentUser.username}`, JSON.stringify(userResults));
+        // Select option
+        function selectOption(option) {
+            const question = currentTest.questions[currentQuestionIndex];
+            userAnswers[question.id] = option;
+            
+            // Update UI
+            document.querySelectorAll('.option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            // Update palette
+            updateQuestionPalette();
         }
 
-        // Performance functions
-        function loadPerformanceData() {
-            const userResults = JSON.parse(localStorage.getItem(`testResults_${currentUser.username}`)) || [];
-            
-            document.getElementById('totalTests').textContent = userResults.length;
-            
-            if (userResults.length > 0) {
-                const totalScore = userResults.reduce((sum, result) => sum + parseFloat(result.percentage), 0);
-                const avgScore = totalScore / userResults.length;
-                const bestScore = Math.max(...userResults.map(result => parseFloat(result.percentage)));
-                
-                document.getElementById('avgScore').textContent = avgScore.toFixed(1) + '%';
-                document.getElementById('bestScore').textContent = bestScore.toFixed(1) + '%';
-                
-                // Calculate total time (simplified)
-                const totalTime = userResults.length * 30; // Assuming 30 min per test on average
-                document.getElementById('totalTime').textContent = Math.floor(totalTime / 60) + 'h ' + (totalTime % 60) + 'm';
-                
-                // Render performance chart
-                renderPerformanceChart(userResults);
-            } else {
-                document.getElementById('avgScore').textContent = '0%';
-                document.getElementById('bestScore').textContent = '0%';
-                document.getElementById('totalTime').textContent = '0h';
-                document.getElementById('performanceChart').innerHTML = '<p>No test data available. Take some tests to see your performance.</p>';
+        // Next question
+        function nextQuestion() {
+            if (currentQuestionIndex < currentTest.questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
             }
         }
 
-        function renderPerformanceChart(results) {
+        // Previous question
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Update question palette
+        function updateQuestionPalette() {
+            const palette = document.getElementById('questionPalette');
+            palette.innerHTML = '';
+            
+            currentTest.questions.forEach((question, index) => {
+                const item = document.createElement('div');
+                item.className = 'palette-item';
+                if (index === currentQuestionIndex) {
+                    item.classList.add('current');
+                }
+                if (userAnswers[question.id]) {
+                    item.classList.add('answered');
+                }
+                item.textContent = index + 1;
+                item.onclick = () => {
+                    currentQuestionIndex = index;
+                    showQuestion(index);
+                };
+                palette.appendChild(item);
+            });
+        }
+
+        // Submit test
+        async function submitTest() {
+            clearInterval(testTimer);
+            
+            // Calculate score
+            let correct = 0;
+            currentTest.questions.forEach(question => {
+                if (userAnswers[question.id] === question.answer) {
+                    correct++;
+                }
+            });
+            
+            const score = (correct / currentTest.questions.length) * 100;
+            
+            // Save test result
+            try {
+                const response = await fetch('/api/test-results', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({
+                        testId: currentTest.id,
+                        testTitle: currentTest.title,
+                        answers: userAnswers,
+                        score: score,
+                        totalQuestions: currentTest.questions.length,
+                        timeSpent: currentTest.duration * 60 - timeRemaining
+                    })
+                });
+                
+                const data = await response.json();
+                if (!data.success) {
+                    console.error('Failed to save test result');
+                }
+            } catch (error) {
+                console.error('Error saving test result:', error);
+            }
+            
+            // Show results
+            alert(`Test submitted!\nYour score: ${correct}/${currentTest.questions.length} (${score.toFixed(1)}%)`);
+            
+            // Hide test interface and show dashboard
+            document.getElementById('testInterface').classList.add('hidden');
+            document.getElementById('dashboard').style.display = 'block';
+            
+            // Update performance metrics
+            updatePerformanceMetrics();
+        }
+
+        // Update performance metrics
+        async function updatePerformanceMetrics() {
+            try {
+                const response = await fetch('/api/test-results', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const results = data.results;
+                    const totalTests = results.length;
+                    const avgScore = results.reduce((sum, result) => sum + result.score, 0) / totalTests;
+                    const bestScore = Math.max(...results.map(result => result.score));
+                    const totalTime = results.reduce((sum, result) => sum + result.timeSpent, 0) / 3600; // Convert to hours
+                    
+                    document.getElementById('totalTests').textContent = totalTests;
+                    document.getElementById('avgScore').textContent = `${avgScore.toFixed(1)}%`;
+                    document.getElementById('bestScore').textContent = `${bestScore.toFixed(1)}%`;
+                    document.getElementById('totalTime').textContent = `${totalTime.toFixed(1)}h`;
+                    
+                    updatePerformanceChart(results);
+                }
+            } catch (error) {
+                console.error('Error loading performance metrics:', error);
+                // Set default values
+                document.getElementById('totalTests').textContent = '0';
+                document.getElementById('avgScore').textContent = '0%';
+                document.getElementById('bestScore').textContent = '0%';
+                document.getElementById('totalTime').textContent = '0h';
+            }
+        }
+
+        // Update performance chart
+        function updatePerformanceChart(results) {
             const chart = document.getElementById('performanceChart');
             chart.innerHTML = '';
             
-            // Simple bar chart for last 5 tests
+            // Use last 5 results or all if less than 5
             const recentResults = results.slice(-5);
             
             recentResults.forEach((result, index) => {
                 const bar = document.createElement('div');
                 bar.className = 'chart-bar';
-                bar.style.height = `${result.percentage}%`;
-                bar.innerHTML = `<div class="chart-label">Test ${index + 1}</div>`;
+                bar.style.height = `${result.score}%`;
+                
+                const label = document.createElement('div');
+                label.className = 'chart-label';
+                label.textContent = `Test ${index + 1}`;
+                
+                bar.appendChild(label);
                 chart.appendChild(bar);
             });
         }
 
-        // AI Guidance functions
-        function getAIGuidance() {
-            const topic = document.getElementById('chapterInput').value;
-            if (!topic) {
-                alert('Please enter a topic or chapter name.');
+        // Get AI guidance
+        async function getAIGuidance() {
+            const query = document.getElementById('aiQuery').value.trim();
+            if (!query) {
+                alert('Please enter a question or topic for AI guidance.');
                 return;
             }
             
-            const guidanceResult = document.getElementById('guidanceResult');
-            guidanceResult.innerHTML = '<div class="loading"></div> Analyzing topic...';
+            const resultDiv = document.getElementById('guidanceResult');
+            resultDiv.innerHTML = '<div class="loading"></div> Getting AI guidance...';
             
-            // Simulate AI processing
-            setTimeout(() => {
-                const guidance = generateAIGuidance(topic);
-                guidanceResult.innerHTML = `
-                    <div class="guidance-result">
-                        <div class="guidance-topic">Guidance for: ${topic}</div>
-                        <div class="guidance-content">
-                            ${guidance.content}
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-value">${guidance.difficulty}</div>
-                                <div class="stat-label">Difficulty</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">${guidance.importance}/10</div>
-                                <div class="stat-label">Importance</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-value">${guidance.estimatedTime}</div>
-                                <div class="stat-label">Est. Study Time</div>
+            try {
+                const response = await fetch('/api/ai-guidance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({ query })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="guidance-result">
+                            <div class="guidance-topic">AI Guidance</div>
+                            <div class="guidance-content">
+                                ${data.guidance}
                             </div>
                         </div>
-                    </div>
-                `;
-            }, 2000);
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                console.error('Error getting AI guidance:', error);
+                resultDiv.innerHTML = '<p>Error getting AI guidance. Please try again.</p>';
+            }
         }
 
-        function generateAIGuidance(topic) {
-            // This is a simplified version. In a real app, this would call an AI API
-            const guidanceTemplates = {
-                physics: {
-                    content: `
-                        <p><strong>Key Concepts to Master:</strong></p>
-                        <ul>
-                            <li>Understand fundamental definitions and formulas</li>
-                            <li>Practice numerical problems regularly</li>
-                            <li>Focus on conceptual understanding</li>
-                            <li>Create formula sheets for quick revision</li>
-                        </ul>
-                        <p><strong>Recommended Study Plan:</strong></p>
-                        <ol>
-                            <li>Read theory from NCERT textbook</li>
-                            <li>Solve example problems</li>
-                            <li>Attempt practice questions</li>
-                            <li>Take topic-wise tests</li>
-                        </ol>
-                    `,
-                    difficulty: "Medium",
-                    importance: "8",
-                    estimatedTime: "2-3 weeks"
-                },
-                chemistry: {
-                    content: `
-                        <p><strong>Key Concepts to Master:</strong></p>
-                        <ul>
-                            <li>Memorize important reactions and mechanisms</li>
-                            <li>Understand periodic table trends</li>
-                            <li>Practice balancing chemical equations</li>
-                            <li>Learn nomenclature rules</li>
-                        </ul>
-                        <p><strong>Recommended Study Plan:</strong></p>
-                        <ol>
-                            <li>Study theoretical concepts</li>
-                            <li>Practice reaction mechanisms</li>
-                            <li>Solve numerical problems</li>
-                            <li>Revise with flashcards</li>
-                        </ol>
-                    `,
-                    difficulty: "Medium-Hard",
-                    importance: "9",
-                    estimatedTime: "3-4 weeks"
-                },
-                mathematics: {
-                    content: `
-                        <p><strong>Key Concepts to Master:</strong></p>
-                        <ul>
-                            <li>Understand theorems and proofs</li>
-                            <li>Practice different types of problems</li>
-                            <li>Focus on problem-solving techniques</li>
-                            <li>Learn shortcut methods</li>
-                        </ul>
-                        <p><strong>Recommended Study Plan:</strong></p>
-                        <ol>
-                            <li>Learn concepts and formulas</li>
-                            <li>Solve basic problems</li>
-                            <li>Attempt advanced problems</li>
-                            <li>Take timed tests</li>
-                        </ol>
-                    `,
-                    difficulty: "Hard",
-                    importance: "10",
-                    estimatedTime: "4-5 weeks"
-                },
-                biology: {
-                    content: `
-                        <p><strong>Key Concepts to Master:</strong></p>
-                        <ul>
-                            <li>Memorize biological terms and definitions</li>
-                            <li>Understand processes and cycles</li>
-                            <li>Learn classification systems</li>
-                            <li>Practice diagram labeling</li>
-                        </ul>
-                        <p><strong>Recommended Study Plan:</strong></p>
-                        <ol>
-                            <li>Read and understand concepts</li>
-                            <li>Create mind maps</li>
-                            <li>Practice diagrams</li>
-                            <li>Revise with MCQs</li>
-                        </ol>
-                    `,
-                    difficulty: "Easy-Medium",
-                    importance: "7",
-                    estimatedTime: "2 weeks"
-                }
-            };
-            
-            // Determine subject from topic or use default
-            let subject = 'physics';
-            if (topic.toLowerCase().includes('chem')) subject = 'chemistry';
-            if (topic.toLowerCase().includes('math')) subject = 'mathematics';
-            if (topic.toLowerCase().includes('bio')) subject = 'biology';
-            
-            return guidanceTemplates[subject] || guidanceTemplates.physics;
+        // Refresh tests
+        function refreshTests() {
+            loadAvailableTests();
         }
 
         // Admin functions
-        function loadAdminData() {
-            // Load questions and tests for admin management
-            loadQuestionList();
-            loadAdminTests();
+        function updateSubjectsForAdmin() {
+            const examType = document.getElementById('examType').value;
+            const subjectSelect = document.getElementById('questionSubject');
+            subjectSelect.innerHTML = '';
+            
+            let subjects = [];
+            if (examType === 'jee') {
+                subjects = ['physics', 'chemistry', 'mathematics'];
+            } else if (examType === 'neet') {
+                subjects = ['physics', 'chemistry', 'biology'];
+            }
+            
+            subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = subject.charAt(0).toUpperCase() + subject.slice(1);
+                subjectSelect.appendChild(option);
+            });
+            
+            updateChaptersForAdmin();
+        }
+
+        function updateChaptersForAdmin() {
+            const examType = document.getElementById('examType').value;
+            const classSelect = document.getElementById('questionClass');
+            const subjectSelect = document.getElementById('questionSubject');
+            const chapterSelect = document.getElementById('questionChapter');
+            
+            const selectedClass = classSelect.value;
+            const selectedSubject = subjectSelect.value;
+            
+            chapterSelect.innerHTML = '';
+            
+            if (questionBank[examType] && questionBank[examType][selectedSubject] && questionBank[examType][selectedSubject][selectedClass]) {
+                const chapters = Object.keys(questionBank[examType][selectedSubject][selectedClass]);
+                
+                chapters.forEach(chapter => {
+                    const option = document.createElement('option');
+                    option.value = chapter;
+                    option.textContent = chapter;
+                    chapterSelect.appendChild(option);
+                });
+            }
+            
+            loadQuestionsForAdmin();
         }
 
         function showQuestionManagement() {
             document.getElementById('questionManagement').classList.remove('hidden');
             document.getElementById('testManagement').classList.add('hidden');
+            loadQuestionsForAdmin();
         }
 
         function showTestManagement() {
             document.getElementById('questionManagement').classList.add('hidden');
             document.getElementById('testManagement').classList.remove('hidden');
+            loadTestsForAdmin();
         }
 
-        function addQuestion() {
+        function loadQuestionsForAdmin() {
+            const examType = document.getElementById('examType').value;
+            const classSelect = document.getElementById('questionClass');
+            const subjectSelect = document.getElementById('questionSubject');
+            const chapterSelect = document.getElementById('questionChapter');
+            
+            const selectedClass = classSelect.value;
+            const selectedSubject = subjectSelect.value;
+            const selectedChapter = chapterSelect.value;
+            
+            const questionList = document.getElementById('questionList');
+            questionList.innerHTML = '';
+            
+            if (questionBank[examType] && questionBank[examType][selectedSubject] && 
+                questionBank[examType][selectedSubject][selectedClass] && 
+                questionBank[examType][selectedSubject][selectedClass][selectedChapter]) {
+                
+                const questions = questionBank[examType][selectedSubject][selectedClass][selectedChapter];
+                
+                questions.forEach(question => {
+                    const questionItem = document.createElement('div');
+                    questionItem.className = 'question-item';
+                    
+                    const questionText = document.createElement('div');
+                    questionText.className = 'question-text';
+                    questionText.textContent = question.text;
+                    
+                    const questionDetails = document.createElement('div');
+                    questionDetails.innerHTML = `
+                        <div class="question-difficulty difficulty-${question.difficulty}">${question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1)}</div>
+                        <div>Correct: ${question.answer}</div>
+                    `;
+                    
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-secondary';
+                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                    deleteBtn.onclick = () => deleteQuestion(question.id);
+                    
+                    questionItem.appendChild(questionText);
+                    questionItem.appendChild(questionDetails);
+                    questionItem.appendChild(deleteBtn);
+                    
+                    questionList.appendChild(questionItem);
+                });
+            } else {
+                questionList.innerHTML = '<p>No questions available for the selected criteria.</p>';
+            }
+        }
+
+        function loadTestsForAdmin() {
+            const testsList = document.getElementById('adminTestsList');
+            testsList.innerHTML = '<p>Test management functionality would be implemented here.</p>';
+        }
+
+        async function addQuestion() {
+            const examType = document.getElementById('examType').value;
+            const classVal = document.getElementById('questionClass').value;
             const subject = document.getElementById('questionSubject').value;
-            const classLevel = document.getElementById('questionClass').value;
             const chapter = document.getElementById('questionChapter').value;
             const difficulty = document.getElementById('questionDifficulty').value;
             const text = document.getElementById('questionText').value;
@@ -1906,123 +2161,81 @@
                 return;
             }
             
-            // Initialize question bank structure if needed
-            if (!questionBank[subject]) questionBank[subject] = {};
-            if (!questionBank[subject][classLevel]) questionBank[subject][classLevel] = {};
-            if (!questionBank[subject][classLevel][chapter]) questionBank[subject][classLevel][chapter] = {};
-            if (!questionBank[subject][classLevel][chapter][difficulty]) {
-                questionBank[subject][classLevel][chapter][difficulty] = [];
-            }
+            // Create question object
+            const newQuestion = {
+                text: text,
+                options: [optionA, optionB, optionC, optionD],
+                answer: correctAnswer,
+                difficulty: difficulty,
+                solution: solution
+            };
             
-            // Add question
-            questionBank[subject][classLevel][chapter][difficulty].push({
-                text,
-                optionA,
-                optionB,
-                optionC,
-                optionD,
-                correctAnswer,
-                solution
-            });
-            
-            // Save to localStorage (in real app, this would be server-side)
-            localStorage.setItem('questionBank', JSON.stringify(questionBank));
-            
-            // Clear form
-            document.getElementById('questionText').value = '';
-            document.getElementById('optionA').value = '';
-            document.getElementById('optionB').value = '';
-            document.getElementById('optionC').value = '';
-            document.getElementById('optionD').value = '';
-            document.getElementById('questionSolution').value = '';
-            
-            // Refresh question list
-            loadQuestionList();
-            
-            alert('Question added successfully!');
-        }
-
-        function loadQuestionList() {
-            const questionList = document.getElementById('questionList');
-            questionList.innerHTML = '';
-            
-            let questionCount = 0;
-            
-            Object.keys(questionBank).forEach(subject => {
-                Object.keys(questionBank[subject]).forEach(classLevel => {
-                    Object.keys(questionBank[subject][classLevel]).forEach(chapter => {
-                        Object.keys(questionBank[subject][classLevel][chapter]).forEach(difficulty => {
-                            questionBank[subject][classLevel][chapter][difficulty].forEach((question, index) => {
-                                questionCount++;
-                                const questionItem = document.createElement('div');
-                                questionItem.className = 'question-item';
-                                questionItem.innerHTML = `
-                                    <div class="question-text">
-                                        <strong>${subject.toUpperCase()} - Class ${classLevel} - ${chapter}</strong><br>
-                                        ${question.text}
-                                    </div>
-                                    <div class="question-difficulty difficulty-${difficulty}">${difficulty}</div>
-                                    <button class="btn btn-secondary" onclick="deleteQuestion('${subject}', ${classLevel}, '${chapter}', '${difficulty}', ${index})" style="width: auto; padding: 0.5rem;">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                `;
-                                questionList.appendChild(questionItem);
-                            });
-                        });
-                    });
+            try {
+                const response = await fetch('/api/questions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify({
+                        examType,
+                        class: classVal,
+                        subject,
+                        chapter,
+                        difficulty,
+                        question: newQuestion
+                    })
                 });
-            });
-            
-            if (questionCount === 0) {
-                questionList.innerHTML = '<p>No questions in the database. Add some questions to get started.</p>';
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Clear form
+                    document.getElementById('questionText').value = '';
+                    document.getElementById('optionA').value = '';
+                    document.getElementById('optionB').value = '';
+                    document.getElementById('optionC').value = '';
+                    document.getElementById('optionD').value = '';
+                    document.getElementById('questionSolution').value = '';
+                    
+                    // Reload questions
+                    loadQuestionsForAdmin();
+                    
+                    alert('Question added successfully!');
+                } else {
+                    alert('Failed to add question: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error adding question:', error);
+                alert('Error adding question. Please try again.');
             }
         }
 
-        function deleteQuestion(subject, classLevel, chapter, difficulty, index) {
+        async function deleteQuestion(questionId) {
             if (confirm('Are you sure you want to delete this question?')) {
-                questionBank[subject][classLevel][chapter][difficulty].splice(index, 1);
-                localStorage.setItem('questionBank', JSON.stringify(questionBank));
-                loadQuestionList();
+                try {
+                    const response = await fetch(`/api/questions/${questionId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        loadQuestionsForAdmin();
+                    } else {
+                        alert('Failed to delete question: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Error deleting question:', error);
+                    alert('Error deleting question. Please try again.');
+                }
             }
         }
 
-        function loadAdminTests() {
-            const tests = JSON.parse(localStorage.getItem('sampleTests')) || [];
-            const adminTestsList = document.getElementById('adminTestsList');
-            adminTestsList.innerHTML = '';
-            
-            tests.forEach(test => {
-                const testItem = document.createElement('div');
-                testItem.className = 'question-item';
-                testItem.innerHTML = `
-                    <div class="question-text">
-                        <strong>${test.title}</strong><br>
-                        Subject: ${test.subject} | Class: ${test.class} | Chapter: ${test.chapter}
-                    </div>
-                    <div class="question-difficulty difficulty-${test.difficulty}">${test.difficulty}</div>
-                    <button class="btn btn-secondary" onclick="deleteTest(${test.id})" style="width: auto; padding: 0.5rem;">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                adminTestsList.appendChild(testItem);
-            });
-        }
-
-        function deleteTest(testId) {
-            if (confirm('Are you sure you want to delete this test?')) {
-                let tests = JSON.parse(localStorage.getItem('sampleTests')) || [];
-                tests = tests.filter(test => test.id !== testId);
-                localStorage.setItem('sampleTests', JSON.stringify(tests));
-                loadAdminTests();
-            }
-        }
-
-        function loadUserData() {
-            // Load any additional user-specific data
-            loadTests();
-        }
-
-        // Initialize the application when the page loads
+        // Initialize the app when the page loads
         window.onload = init;
     </script>
 </body>
